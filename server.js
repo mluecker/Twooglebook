@@ -18,7 +18,7 @@ app.configure('development', function () {
     dumpExceptions: true,
     showStack: true
   }));
-  app.set('port', 9292);
+  app.set('port', 80);
 });
 
 var server = app.listen(app.settings.port);

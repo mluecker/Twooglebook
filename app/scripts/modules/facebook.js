@@ -1,7 +1,8 @@
 define([
   'backbone',
+  'modules/details',
 	'text!templates/facebook.html'
-  ], function(Backbone, Template) {
+  ], function(Backbone, Details, Template) {
 
   window.Facebook={};
 
@@ -9,16 +10,35 @@ define([
   });
 
   Facebook.Collection = Backbone.Collection.extend({
-    model: Facebook.Model,
   	initialize: function(models, options){
-  		this.query="NBA";
+  		this.query=options.query;
+      this.access_token=options.access_token;
+      this.lat=options.lat;
+      this.lon=options.lon;
     },
     url: function(){
-  		return "https://graph.facebook.com/search?q="+this.query+"&type=post";
+      return "https://graph.facebook.com/search?q=" + this.query + "&type=place&center="+ this.lat +","+ this.lon +"&distance=10000&access_token=" + this.access_token;
   	},
   	parse : function(response){
   		return response.data;
-  	}
+  	},
+    fetch: function(options) {
+     options    = options || {};
+     var self   = this;
+     var params = _.clone(options);
+
+     if (params.data) {
+       this.query = params.data.query;
+     }
+
+     params.error = function() {
+     };
+
+     params.success = function(model, resp, options) {
+     };
+
+     return Backbone.Collection.prototype.fetch.call(this, options);
+   }
   });
 
   Facebook.ItemView = Backbone.View.extend({
@@ -29,18 +49,25 @@ define([
     render: function(){
       this.$el.empty().append(this.template(this.model));
       return this;
+    },
+    events : {
+      'click': '_onClickItem'
+    },
+    _onClickItem:function(e){
+      var $el = $('#main');
+      console.log(this.model);
+      var detailsView = new Details.View({
+          model : this.model
+      });
+
+      detailsView.setElement($el.find('#details'));
+      detailsView.render();
     }
   });
 
   Facebook.ListView = Backbone.View.extend({
     initialize: function(){
-      var self = this;
-      this.collection = new Facebook.Collection;
-      this.collection.fetch({
-        success: function(){
-          self.render();
-        }
-      });
+      this.collection.on('reset', this.render,this);
     },
     render: function(){
       this.collection.each(function(post){
