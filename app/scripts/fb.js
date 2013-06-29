@@ -1,7 +1,7 @@
-define(['facebook'], function(){
+define(['facebook', 'config'], function(){
   FB.init({
-    appId      : '285107258299628',
-    channelUrl : 'http://twooglebuk.de/'
+    appId : Config.facebook.appId,
+    channelUrl : Config.facebook.channelUrl
   });
   FB.getLoginStatus(function(response) {
     Backbone.trigger('setAccess_Token',response.authResponse.accessToken);
