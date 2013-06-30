@@ -1,7 +1,18 @@
-<div class="well well-small">Wonach suchen Sie?</div>
-<form class="form-search">
- <div class="input-append">
-   <input type="text" class="span112 search-query">
-   <button class="btn search-place">Search</button>
- </div>
-</form>
+<div class="well well-small">
+	<form>
+ 		<div class="input-append">
+ 			<label>Wonach suchen Sie?</label>
+  			<input class="span12" id="appendedInputButton" placeholder="z.B. Pub" type="text">
+  			<button class="btn search-place" type="button"><i class="icon-search"></i></button>
+ 		</div>
+ 		<input type="checkbox" id="read_more" role="button">
+ 		<label for="read_more" onclick="">
+ 			<span>Mehr Optionen <i class="icon-chevron-down"></i></span>
+ 			<span>ausblenden <i class="icon-chevron-up"></i></span>
+ 		</label> 
+ 		<section id="detail-search">
+  			<label>Suchradius</label>
+  			<input class="span12" id="radius" placeholder="z.B. 5000" type="text">
+  	  	</section>  
+	</form>
+</div>

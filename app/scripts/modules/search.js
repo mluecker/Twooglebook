@@ -33,9 +33,19 @@ function(Backbone, Template) {
    _onSubmit: function(e) {
      e.preventDefault();
 
-     var searchValue = this.$el.find('.search-query').val();
+     var searchValue = this.$el.find('#appendedInputButton').val();
+     //var whereValue = this.$el.find('#where').val();
+     var radiusValue = this.$el.find('#radius').val();
 
-     this.model.set({ searchValue: searchValue });
+     if(radiusValue == ""){
+      radiusValue=5000;
+     }
+
+     this.model.set({ 
+        searchValue: searchValue,
+        //whereValue: whereValue,
+        radiusValue: radiusValue
+      });
    }
 
  });

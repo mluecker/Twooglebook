@@ -22,6 +22,7 @@ define([
 
       this.searchView = new Search.View();
       this.searchView.model.on('change:searchValue',this._onChangeSearchValue, this);
+      this.searchView.model.on('change:radiusValue',this._onChangeSearchValue, this);
 
       navigator.geolocation.getCurrentPosition( function(currentPosition) {
         self.model.set({ position: currentPosition });
@@ -49,6 +50,7 @@ define([
         var longitude = this.model.get('position').coords.longitude;
         this.facebookCollection = new Facebook.Collection([], {
           query: 'bar',
+          radius: '10000',
           lat: latitude,
           lon: longitude,
           access_token: this.model.get('access_token')
@@ -67,12 +69,14 @@ define([
     },
     _onChangeSearchValue: function(model) {
      var searchValue = model.get('searchValue');
+     var radiusValue = model.get('radiusValue');
      var self = this;
 
      this.facebookView.collection.remove();
 
      this.facebookView.collection.fetch({
-       data: {query: searchValue},
+       data: {query: searchValue,
+        radius: radiusValue},
        success: function() {
          self.facebookView.render();
        }
