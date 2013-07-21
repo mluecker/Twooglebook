@@ -17,12 +17,15 @@ define([
       this.lat=options.lat;
       this.lon=options.lon;
     },
+
     url: function(){
       return "https://graph.facebook.com/search?q=" + this.query + "&type=place&limit=5000&center="+ this.lat +","+ this.lon +"&distance="+this.radius+"&access_token=" + this.access_token;
   	},
-  	parse : function(response){
+  	
+    parse : function(response){
   		return response.data;
   	},
+    
     fetch: function(options) {
      options    = options || {};
      var self   = this;
@@ -44,18 +47,23 @@ define([
   });
 
   Facebook.ItemView = Backbone.View.extend({
+    
     template: _.template(Template),
+    
     tagName: 'li',
+    
     className: 'post',
 
     render: function(){
       this.$el.empty().append(this.template(this.model));
       return this;
     },
+    
     events : {
       'click': '_onClickItem'
     },
-    _onClickItem:function(e){
+    
+    _onClickItem:function(){
       var $el = $('#main');
       var detailsView = new Details.View({
           model : this.model
@@ -67,9 +75,13 @@ define([
   });
 
   Facebook.ListView = Backbone.View.extend({
+    
     initialize: function(){
       this.collection.on('reset', this.render,this);
+
+      this.listenTo(Backbone, 'clickOnMapMarker', this.clickOnMapMarker);
     },
+
     render: function(){
       $('.post-list').empty();
       $('#resultHead').html('Ergebnisse ('+this.collection.length+')');
@@ -77,7 +89,26 @@ define([
         var ItemView=new Facebook.ItemView({model: post});
         $('.post-list').prepend(ItemView.render().el);
       });
+
+      Backbone.trigger('setPlacesToMap', this.collection.models);
+
       return this;
+    },
+
+    clickOnMapMarker: function(selectedMarker) {
+      var marker = _.find(this.collection.models, function(model) {
+        var name = model.get('name');
+        if(name === selectedMarker) {
+          return model;
+        }
+      });
+
+      var $el = $('#main');
+      var detailsView = new Details.View({
+          model : marker
+      });
+      detailsView.setElement($el.find('#details'));
+      detailsView.render();
     }
   });
 

@@ -1,13 +1,17 @@
 require.config({	
   paths: {
-    'jquery': 'vendor/jquery/jquery',
-    'underscore': 'vendor/underscore-amd/underscore',
-    'backbone': 'vendor/backbone-amd/backbone',
-    'text':'vendor/requirejs/text',
-    'facebook': '//connect.facebook.net/en_US/all',
+    'jquery'      : 'vendor/jquery/jquery',
+    'underscore'  : 'vendor/underscore-amd/underscore',
+    'backbone'    : 'vendor/backbone-amd/backbone',
+    'text'        :'vendor/requirejs/text',
+    'openlayers'  : 'vendor/openlayers/ol',
+    'facebook'    : '//connect.facebook.net/en_US/all',
     'config'      : 'config'  
   },
    shim: {
+    'vendor/openlayers/openlayers': {
+      exports: 'ol'
+    },
     'facebook' : {
       export: 'FB'
     },

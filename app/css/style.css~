@@ -52,15 +52,8 @@ ul {
 }
 
 #details {
-  position: absolute;
-  top: 45px;
-  right: 45px;
-  width: 220px;
-  z-index: 800;
-}
-
-#details .details-inner {
-  margin-bottom: 0;
+  height: 120px;
+  margin-bottom: 20px;
 }
 
 #detail-search {
@@ -148,6 +141,6 @@ ul {
 }
 
 #map-container {
-  height: 600px;
+  height: 460px;
   border: 1px solid #A8A8A8;
 }
