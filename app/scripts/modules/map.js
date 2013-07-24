@@ -11,7 +11,7 @@ function(Backbone, Template, Ol) {
     defaults: {
       location: 'Hamburg'
     }
-  });  
+  });
 
   Map.GeocodingModel = Backbone.Model.extend({
     // override backbone synch to force a jsonp call
@@ -50,6 +50,8 @@ function(Backbone, Template, Ol) {
       this.model.on('change:position', this.setCenterPosition, this);
 
       this.listenTo(Backbone, 'setPlacesToMap', this.addPlacesToMap);
+
+      this.listenTo(Backbone, 'highlightFeature', this.highlightFeature);
 
       this.getCenterPosition();
       },
@@ -128,15 +130,29 @@ function(Backbone, Template, Ol) {
       ]);
 
       this.map.addLayer(homeLayer);
+      ),
+        16 // Zoom level
+      );
+    },
+
+    highlightFeature: function(model){
+
+      this.selectControl.unselectAll();
+
+      var even = _.find(this.overlay.features, function(feature,index){
+        return feature.attributes.id == model.attributes.name;
+      });
+      
+      this.selectControl.select(even);
     },
 
     addPlacesToMap: function(models) {
       var defaultStyle = new OpenLayers.Style({
         'externalGraphic': 'img/marker.png',
-        'graphicWidth'    : 28,
-        'graphicHeight'   : 28,
-        'graphicYOffset'  : -24,
-        'title'           : '${tooltip}'
+        'graphicWidth' : 28,
+        'graphicHeight' : 28,
+        'graphicYOffset' : -24,
+        'title' : '${tooltip}'
       });
 
       var selectStyle = new OpenLayers.Style({
@@ -146,15 +162,20 @@ function(Backbone, Template, Ol) {
         'graphicYOffset'  : -24,
         'title'           : '${tooltip}'
       }); 
+        'graphicWidth' : 28,
+        'graphicHeight' : 28,
+        'graphicYOffset' : -24,
+        'title' : '${tooltip}'
+      });
 
-      var overlay = new OpenLayers.Layer.Vector('Overlay', {
+      this.overlay = new OpenLayers.Layer.Vector('Overlay', {
         styleMap: new OpenLayers.StyleMap({
           'default': defaultStyle,
           'select': selectStyle
         })
       });
 
-      overlay.events.on({
+      this.overlay.events.on({
           'featureselected': function(feature) {
             Backbone.trigger('clickOnMapMarker', feature.feature.attributes.id);
           },
@@ -164,23 +185,23 @@ function(Backbone, Template, Ol) {
       });
 
       // Add a control for selecting a marker
-      var selectControl = new OpenLayers.Control.SelectFeature(
-        overlay,
+      this.selectControl = new OpenLayers.Control.SelectFeature(
+        this.overlay,
         {
           box: false,
           hover: false,
           toggle: false,
-          multiple: false, 
-          clickout: false, 
+          multiple: false,
+          clickout: false,
           toggleKey: "ctrlKey", // ctrl key removes from selection
           multipleKey: "shiftKey" // shift key adds to selection
         }
       )
                 
-      this.map.addControl(selectControl);
-      selectControl.activate();
+      this.map.addControl(this.selectControl);
+      this.selectControl.activate();
 
-      this.map.addLayer(overlay);
+      this.map.addLayer(this.overlay);
 
       // Add markers to the map
       _.each(models, function(model) {
@@ -189,14 +210,13 @@ function(Backbone, Template, Ol) {
         var locationName = model.get('name');
         var myLocation = new OpenLayers.Geometry.Point(longitude, latitude).transform('EPSG:4326', 'EPSG:3857');
 
-        overlay.addFeatures([
+        this.overlay.addFeatures([
           new OpenLayers.Feature.Vector(myLocation, {
             tooltip: locationName,
             id: locationName
           })
         ]);
       }, this);
-
     }
   });
 

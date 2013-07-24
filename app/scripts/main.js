@@ -1,4 +1,4 @@
-require.config({	
+require.config({  
   paths: {
     'jquery'      : 'vendor/jquery/jquery',
     'underscore'  : 'vendor/underscore-amd/underscore',
@@ -22,6 +22,6 @@ require.config({
 });
 
 require(['app'], function(App) {
-	var app = new App.View;
-	app.render();
+var app = new App.View;
+app.render();
 });

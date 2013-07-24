@@ -40,6 +40,10 @@ function(Backbone, Template) {
      if(radiusValue == ""){
       radiusValue=5000;
      }
+      if(parseInt(radiusValue) > 50000){
+      radiusValue=50000;
+      this.$el.find('#radius').val('50000');
+     }
 
      this.model.set({ 
         searchValue: searchValue,
