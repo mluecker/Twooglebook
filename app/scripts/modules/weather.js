@@ -21,11 +21,12 @@ function(Backbone, Config, Template) {
     // Make the request.
     return $.ajax(params);
   },
+
   url: function(){
     return 'http://openweathermap.org/data/2.5/weather?lat='+this.get('latitude')+'&lon='+this.get('longitude')+'&APPID='+Config.openweather.appId;
   },
+  
   parse: function(response){
-    console.log(response);
     return response;
   }
  });

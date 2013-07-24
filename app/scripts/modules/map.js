@@ -1,9 +1,10 @@
 define([
   'backbone',
+  'config',
   'text!templates/map.html',
   'vendor/openlayers/openlayers'
 ], 
-function(Backbone, Template, Ol) {
+function(Backbone, Config, Template, Ol) {
   
   var Map = {};
 
@@ -14,14 +15,13 @@ function(Backbone, Template, Ol) {
   });
 
   Map.GeocodingModel = Backbone.Model.extend({
-    // override backbone synch to force a jsonp call
+
     sync: function(method, model, options) {
-      // Default JSON-request options.
       var params = _.extend({
         type:         'GET',
         dataType:     'jsonp',
         url:          model.url(),
-        jsonp:        "jsonpCallback",   // the api requires the jsonp callback name to be this exact name
+        jsonp:        "callback",
         processData:  false
       }, options);
    
@@ -31,10 +31,17 @@ function(Backbone, Template, Ol) {
 
     url: function() {
 
+      console.log(this);
+
+      var latitude = this.get('latitude');
+      var longitude = this.get('longitude');
+
+      return 'http://beta.geocoding.cloudmade.com/v3/'+ Config.cloudemade.apiKey +'/api/geo.location.search.2?format=json&source=OSM&enc=UTF-8&limit=10&q='+ latitude +';'+ longitude +'';
     }, 
 
     parse: function(response) {
 
+      console.log(response);
 
       return response;
     }
@@ -46,7 +53,7 @@ function(Backbone, Template, Ol) {
 
     initialize: function() {
       this.model = new Map.Model();
-  
+ 
       this.model.on('change:position', this.setCenterPosition, this);
 
       this.listenTo(Backbone, 'setPlacesToMap', this.addPlacesToMap);
@@ -80,6 +87,19 @@ function(Backbone, Template, Ol) {
     renderMap: function(position) {
       var latitude = this.model.get('position').coords.latitude;
       var longitude = this.model.get('position').coords.longitude;
+
+      this.geoCodeModel = new Map.GeocodingModel();
+      this.geoCodeModel.set({
+        latitude: latitude,
+        longitude: longitude
+      })
+      this.geoCodeModel.fetch({
+        success: function(response) {
+          console.log(response);
+          $('#adress').text(response.get('places')[0].street)
+        }
+      });
+
 
       this.map = new OpenLayers.Map({
         div: "map-container",

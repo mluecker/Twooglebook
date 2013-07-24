@@ -4,7 +4,8 @@ define([
   'modules/map',
   'modules/weather',
   'modules/search',
-  'text!templates/main.html'
+  'text!templates/main.html',
+  'fb'
   ], function(Backbone, Facebook, Map, Weather, Search, Template ) {
 
   window.App={};
@@ -21,16 +22,17 @@ define([
     model: new App.Model(),
 
     initialize: function(){
-      OAuth.initialize('h7CfdBhjN4lmcwXB7wrej3rvRog');
-      OAuth.popup('facebook', function(error, result) {
-        self._onReceiveAccessToken(result.access_token);
-      });
+      // OAuth.initialize('h7CfdBhjN4lmcwXB7wrej3rvRog');
+      // OAuth.popup('facebook', function(error, result) {
+      //   // self._onReceiveAccessToken(result.access_token);
+      // });
       //OAuth.popup('twitter', function(error, result) {
       // console.log(result);
       //});
+
       var self = this;
-      //this.listenTo(Backbone, 'setAccess_Token',this._onReceiveAccessToken);
-      this.model.on('change:access_token',this._onPrepareFacebookCollection,this);
+      this.listenTo(Backbone, 'setAccess_Token', this._onReceiveAccessToken);
+      this.model.on('change:access_token', this._onPrepareFacebookCollection, this);
 
       // Map-View
       this.mapView = new Map.View();
@@ -107,20 +109,20 @@ define([
       }
     },
     _onChangeSearchValue: function(model) {
+     var self = this;
      var searchValue = model.get('searchValue');
      var radiusValue = model.get('radiusValue');
-     var self = this;
 
-     this.facebookView.collection.remove();
+      this.facebookView.collection.remove();
 
-     this.facebookView.collection.fetch({
-       data: {query: searchValue,
+      this.facebookView.collection.fetch({
+        data: {query: searchValue,
         radius: radiusValue},
-       success: function() {
-         self.facebookView.render();
-       }
-     });
-   }
+        success: function() {
+          self.facebookView.render();
+        }
+      });
+    }
   });
 
   return App;

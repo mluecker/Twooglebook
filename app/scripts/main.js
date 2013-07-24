@@ -13,7 +13,7 @@ require.config({
       exports: 'ol'
     },
     'facebook' : {
-      export: 'FB'
+      exports: 'FB'
     },
     'config': {
       exports: 'Config'
@@ -22,6 +22,6 @@ require.config({
 });
 
 require(['app'], function(App) {
-var app = new App.View;
-app.render();
+  var app = new App.View;
+  app.render();
 });
