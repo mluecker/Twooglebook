@@ -3,7 +3,7 @@ define([
  'config',
  'text!templates/weather.html'
 ],
-function(Backbone, Template) {
+function(Backbone, Config, Template) {
  
  var Weather = {};
 
@@ -43,7 +43,12 @@ function(Backbone, Template) {
    },
    
    render: function() {
-      
+     
+     var temp_deg = (parseFloat(this.model.get('main').temp)-273.15).toFixed(1);
+
+     this.model.set({
+      temp_deg: temp_deg
+     });
 
      this.$el.empty().append(this.template(this.model));
      
