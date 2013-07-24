@@ -20,11 +20,19 @@ define([
 
     url: function(){
       return "https://graph.facebook.com/search?q=" + this.query + "&type=place&limit=5000&center="+ this.lat +","+ this.lon +"&distance="+this.radius+"&access_token=" + this.access_token;
+<<<<<<< HEAD
     },
     
     parse : function(response){
       return response.data;
     },
+=======
+  	},
+  	
+    parse : function(response){
+  		return response.data;
+  	},
+>>>>>>> c5de947228f73558adc2fcf91d1151229584d1ab
     
     fetch: function(options) {
      options    = options || {};

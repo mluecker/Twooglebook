@@ -2,10 +2,17 @@ define([
   'backbone',
   'modules/facebook',
   'modules/map',
+<<<<<<< HEAD
   'modules/weather',
   'modules/search',
 	'text!templates/main.html'
   ], function(Backbone, Facebook, Map, Weather, Search, Template ) {
+=======
+  'modules/search',
+	'text!templates/main.html',
+  'fb'
+  ], function(Backbone, Facebook, Map, Search, Template ) {
+>>>>>>> c5de947228f73558adc2fcf91d1151229584d1ab
 
   window.App={};
 
@@ -15,11 +22,19 @@ define([
   App.View = Backbone.View.extend({
 
     template: _.template(Template),
+<<<<<<< HEAD
 
     el : '#main',
 
     model: new App.Model(),
 
+=======
+    
+    el : '#main',
+    
+    model: new App.Model(),
+    
+>>>>>>> c5de947228f73558adc2fcf91d1151229584d1ab
     initialize: function(){
       OAuth.initialize('h7CfdBhjN4lmcwXB7wrej3rvRog');
       OAuth.popup('facebook', function(error, result) {
@@ -35,8 +50,11 @@ define([
       // Map-View
       this.mapView = new Map.View();
 
+<<<<<<< HEAD
       this.weatherView = new Weather.View();
 
+=======
+>>>>>>> c5de947228f73558adc2fcf91d1151229584d1ab
       // Search-View
       this.searchView = new Search.View();
       this.searchView.model.on('change:searchValue',this._onChangeSearchValue, this);
@@ -66,7 +84,11 @@ define([
     _onReceiveAccessToken: function(access_token){
       this.model.set({access_token:access_token});
     },
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> c5de947228f73558adc2fcf91d1151229584d1ab
     _onPrepareFacebookCollection: function(model){
       var hasAccess_token = model.get('access_token') ? true : false;
       var hasPosition = model.get('position') ? true : false;
