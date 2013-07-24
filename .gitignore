@@ -1,1 +1,6 @@
 config.js
+app/scripts/vendor/backbone-amd/
+app/scripts/vendor/jquery/
+app/scripts/vendor/requirejs/
+app/scripts/vendor/text/
+app/scripts/vendor/underscore-amd/
