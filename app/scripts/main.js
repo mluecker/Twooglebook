@@ -3,8 +3,8 @@ require.config({
     'jquery'      : 'vendor/jquery/jquery',
     'underscore'  : 'vendor/underscore-amd/underscore',
     'backbone'    : 'vendor/backbone-amd/backbone',
-    'text'        :'vendor/requirejs/text',
-    'openlayers'  : 'vendor/openlayers/ol',
+    'text'        : 'vendor/text/text',
+    'openlayers'  : 'vendor/openlayers/openlayers',
     'facebook'    : '//connect.facebook.net/en_US/all',
     'config'      : 'config'  
   },
