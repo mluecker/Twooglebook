@@ -3,7 +3,7 @@ define([
   'text!templates/map.html',
   'vendor/openlayers/openlayers'
 ], 
-function(Backbone, Template, Ol, Lf) {
+function(Backbone, Template, Ol) {
   
   var Map = {};
 
@@ -12,6 +12,33 @@ function(Backbone, Template, Ol, Lf) {
       location: 'Hamburg'
     }
   });  
+
+  Map.GeocodingModel = Backbone.Model.extend({
+    // override backbone synch to force a jsonp call
+    sync: function(method, model, options) {
+      // Default JSON-request options.
+      var params = _.extend({
+        type:         'GET',
+        dataType:     'jsonp',
+        url:          model.url(),
+        jsonp:        "jsonpCallback",   // the api requires the jsonp callback name to be this exact name
+        processData:  false
+      }, options);
+   
+      // Make the request.
+      return $.ajax(params);
+    },
+
+    url: function() {
+
+    }, 
+
+    parse: function(response) {
+
+
+      return response;
+    }
+  })
 
   Map.View = Backbone.View.extend({
 
@@ -56,6 +83,7 @@ function(Backbone, Template, Ol, Lf) {
         div: "map-container",
         controls: [
           new OpenLayers.Control.Attribution(),
+          new OpenLayers.Control.Navigation(),
           new OpenLayers.Control.Zoom()
         ],
         layers: [
@@ -70,8 +98,36 @@ function(Backbone, Template, Ol, Lf) {
           new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
           new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
         ), 
-        16 // Zoom level
-      );      
+        15 // Zoom level
+      );   
+
+      var defaultStyle = new OpenLayers.Style({
+        'externalGraphic': 'img/home.png',
+        'graphicWidth'    : 36,
+        'graphicHeight'   : 36,
+        'graphicYOffset'  : -24,
+        'title'           : '${tooltip}'
+      });
+
+      var homeLayer = new OpenLayers.Layer.Vector('HomeLayer', {
+        styleMap: new OpenLayers.StyleMap({
+          'default': defaultStyle
+        })
+      }); 
+
+       // Add home marker
+      var homeLatitude = this.model.get('position').coords.latitude;
+      var homeLongitude = this.model.get('position').coords.longitude;
+      var homeLocation = new OpenLayers.Geometry.Point(homeLongitude, homeLatitude).transform('EPSG:4326', 'EPSG:3857');
+      
+      homeLayer.addFeatures([
+        new OpenLayers.Feature.Vector(homeLocation, {
+          tooltip: 'Home',
+          id: 'home'
+        })
+      ]);
+
+      this.map.addLayer(homeLayer);
     },
 
     addPlacesToMap: function(models) {
@@ -89,7 +145,7 @@ function(Backbone, Template, Ol, Lf) {
         'graphicHeight'   : 28,
         'graphicYOffset'  : -24,
         'title'           : '${tooltip}'
-      });
+      }); 
 
       var overlay = new OpenLayers.Layer.Vector('Overlay', {
         styleMap: new OpenLayers.StyleMap({
