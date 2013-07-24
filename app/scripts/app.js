@@ -94,7 +94,7 @@ define([
         });
 
         this.weatherView.setElement(this.$el.find('#weather'));
-
+        console.log(this.model);
         this.weatherView.model.set({
           latitude: this.model.get('position').coords.latitude,
           longitude: this.model.get('position').coords.longitude

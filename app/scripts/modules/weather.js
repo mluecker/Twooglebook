@@ -3,7 +3,7 @@ define([
  'config',
  'text!templates/weather.html'
 ],
-function(Backbone, Config, Template) {
+function(Backbone, Template) {
  
  var Weather = {};
 
