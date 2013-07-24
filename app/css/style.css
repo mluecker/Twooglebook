@@ -17,6 +17,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', end
 
 }
 
+#adress {
+  color: #fff;
+  float: left;
+  margin-left: 1%;
+}
+
 .content {
   padding: 10px;
   box-sizing: border-box;
