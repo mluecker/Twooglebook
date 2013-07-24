@@ -7,12 +7,12 @@ body{
   width: 100%;
   height: 50px;
   background: #45484d; /* Old browsers */
-background: -moz-linear-gradient(top,  #45484d 0%, #000000 100%); /* FF3.6+ */
+background: -moz-linear-gradient(top, #45484d 0%, #000000 100%); /* FF3.6+ */
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#45484d), color-stop(100%,#000000)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #45484d 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #45484d 0%,#000000 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #45484d 0%,#000000 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #45484d 0%,#000000 100%); /* W3C */
+background: -webkit-linear-gradient(top, #45484d 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, #45484d 0%,#000000 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top, #45484d 0%,#000000 100%); /* IE10+ */
+background: linear-gradient(to bottom, #45484d 0%,#000000 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
 
 }
@@ -59,26 +59,20 @@ ul {
 }
  
 ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 3px;
 }
  
 ::-webkit-scrollbar-thumb {
     border-radius: 3px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 
 #details {
   position: absolute;
-<<<<<<< HEAD
   top: 35px;
   right: 35px;
   width: 250px;
-=======
-  top: 45px;
-  right: 45px;
-  width: 220px;
->>>>>>> c5de947228f73558adc2fcf91d1151229584d1ab
   z-index: 800;
 }
 
@@ -91,28 +85,28 @@ ul {
     visibility: hidden;
 }
 
-.arrow:after, .arrow:before { 
-  right: 100%; 
-  border: solid transparent; 
-  content: " "; 
-  height: 0; 
-  width: 0; 
-  position: absolute; 
-  pointer-events: none; 
+.arrow:after, .arrow:before {
+  right: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
 }
 
 .arrow:after {
-  border-color: rgba(136, 183, 213, 0); 
-  border-right-color: #49afcd; 
-  border-width: 10px; 
-  top: 50%; 
+  border-color: rgba(136, 183, 213, 0);
+  border-right-color: #49afcd;
+  border-width: 10px;
+  top: 50%;
   margin-top: -10px;
-} 
+}
 .arrow:before {
-   border-color: rgba(194, 225, 245, 0); 
-   border-right-color: #1f6377; 
-   border-width: 11px; 
-   top: 50%; 
+   border-color: rgba(194, 225, 245, 0);
+   border-right-color: #1f6377;
+   border-width: 11px;
+   top: 50%;
    margin-top: -11px;
 }
 
@@ -198,9 +192,5 @@ ul {
 #map-container {
   height: 600px;
   border: 1px solid #A8A8A8;
-<<<<<<< HEAD
   border-radius: 3px;
 }
-=======
-}
->>>>>>> c5de947228f73558adc2fcf91d1151229584d1ab
