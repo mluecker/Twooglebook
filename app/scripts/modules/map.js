@@ -130,9 +130,7 @@ function(Backbone, Template, Ol) {
       ]);
 
       this.map.addLayer(homeLayer);
-      ),
-        16 // Zoom level
-      );
+      
     },
 
     highlightFeature: function(model){
@@ -162,11 +160,6 @@ function(Backbone, Template, Ol) {
         'graphicYOffset'  : -24,
         'title'           : '${tooltip}'
       }); 
-        'graphicWidth' : 28,
-        'graphicHeight' : 28,
-        'graphicYOffset' : -24,
-        'title' : '${tooltip}'
-      });
 
       this.overlay = new OpenLayers.Layer.Vector('Overlay', {
         styleMap: new OpenLayers.StyleMap({
