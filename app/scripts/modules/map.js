@@ -52,7 +52,7 @@ function(Backbone, Template, Ol) {
       this.listenTo(Backbone, 'setPlacesToMap', this.addPlacesToMap);
 
       this.getCenterPosition();
-    },
+      },
 
     setCenterPosition: function(position) {
       this.render();
