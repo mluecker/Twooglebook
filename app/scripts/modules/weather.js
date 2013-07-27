@@ -37,14 +37,15 @@ function(Backbone, Config, Template) {
 
    className : "weather",
 
-   //model: new Weather.Model,
-
    initialize: function() {
     this.model = new Weather.Model;
+
+    // this.model.on('change:latitude', this.render, this);
+
+    this.listenTo(Backbone, 'setNewLocation', this.setNewLocation);
    },
    
    render: function() {
-     
      var temp_deg = (parseFloat(this.model.get('main').temp)-273.15).toFixed(1);
 
      this.model.set({
@@ -54,6 +55,21 @@ function(Backbone, Config, Template) {
      this.$el.empty().append(this.template(this.model));
      
      return this;
+   },
+
+   setNewLocation: function(newLocation) {
+    var self = this;
+
+    this.model.set({ 
+      latitude: newLocation.lat,
+      longitude: newLocation.lon
+    });
+
+    this.model.fetch({
+      success: function(model, response) {
+        self.render();
+      }
+    });
    }
 
  });
