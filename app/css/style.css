@@ -1,47 +1,54 @@
-/* Feel free to use @import. r.js will merge them, when building */
-body{
+/**
+ * Styles for the geocoding module
+ *
+ * @author Mathias Lücker
+ * @created 15.6.2013
+ */
+body {
   background-image: url(../img/background.png);
 }
 
-#header{
+#header {
   width: 100%;
   height: 50px;
   background: #45484d; /* Old browsers */
-background: -moz-linear-gradient(top, #45484d 0%, #000000 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#45484d), color-stop(100%,#000000)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top, #45484d 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top, #45484d 0%,#000000 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top, #45484d 0%,#000000 100%); /* IE10+ */
-background: linear-gradient(to bottom, #45484d 0%,#000000 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
-
+  background: -moz-linear-gradient(top, #45484d 0%, #000000 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#45484d), color-stop(100%,#000000)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #45484d 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #45484d 0%,#000000 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #45484d 0%,#000000 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #45484d 0%,#000000 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
 }
-
 
 .content {
   padding: 10px;
   box-sizing: border-box;
 }
-.boxshadow{
+
+.boxshadow {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
 }
 
-.post-item{
+
+/* Places
+ *===================================*/
+.post-item {
   width: -moz-calc(100% - 20px);
   width: -webkit-calc(100% - 20px);
   width: -o-calc(100% - 20px);
   width: calc(100% - 20px);
-  text-align: left !important;
   font-size: 14px;
+  text-align: left !important;
 }
 
 .post-list{
   list-style-type: none;
-  list-style-position:inside;
+  list-style-position: inside;
 }
 
 ul {
-  margin:2px !important;
+  margin: 2px !important;
 }
 
 .post-list-container{
@@ -50,12 +57,15 @@ ul {
   text-align: left !important;
 }
 
-#results{
-  background-color: #f5f5f5;
+#results {
   border: 1px solid #e3e3e3;
   border-radius: 3px;
+  background-color: #f5f5f5;
 }
 
+
+/* Browser Scrollbar
+ *===================================*/
 ::-webkit-scrollbar {
     width: 12px;
 }
@@ -68,23 +78,6 @@ ul {
 ::-webkit-scrollbar-thumb {
     border-radius: 3px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-}
-
-#details {
-  position: absolute;
-  top: 80px;
-  right: 35px;
-  width: 250px;
-  z-index: 800;
-}
-
-#details .details-inner {
-  margin-bottom: 0;
-}
-
-#detail-search {
-    display: none;
-    visibility: hidden;
 }
 
 .arrow:after, .arrow:before {
@@ -104,23 +97,13 @@ ul {
   top: 50%;
   margin-top: -10px;
 }
+
 .arrow:before {
    border-color: rgba(194, 225, 245, 0);
    border-right-color: #1f6377;
    border-width: 11px;
    top: 50%;
    margin-top: -11px;
-}
-
-#search input[type=checkbox] {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    width: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
 }
 
 [for="read_more"] {
@@ -171,22 +154,59 @@ ul {
     visibility: hidden;
 }
 
+
+/* Details
+ *===================================*/
+#details {
+  position: absolute;
+  top: 80px;
+  right: 35px;
+  width: 250px;
+  z-index: 800;
+}
+
+#details .details-inner {
+  margin-bottom: 0;
+}
+
+#detail-search {
+  display: none;
+  visibility: hidden;
+}
+
+
+/* Search
+ *===================================*/
+#search input[type=checkbox] {
+  clip: rect(0 0 0 0);
+  width: 1px;
+  border: 0;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  position: absolute;
+}
+
 #search input[type=checkbox]:checked ~ #detail-search {
-    display: block;
-    visibility: visible;
-    opacity:1;
+  display: block;
+  visibility: visible;
+  opacity:1;
 }
 
 #search input[type=checkbox]:checked ~ [for="read_more"] span:first-of-type {
-    display: none;
-    visibility: hidden;
+  display: none;
+  visibility: hidden;
 }
 
 #search input[type=checkbox]:checked ~ [for="read_more"] span:last-of-type {
-    display: block;
-    visibility: visible;
+  display: block;
+  visibility: visible;
 }
 
+
+/* Map
+ *===================================*/
 #map {
   width: 100%;
 }
@@ -196,12 +216,17 @@ ul {
   border: 1px solid #A8A8A8;
   border-radius: 3px;
 }
+
+
+/* Weather
+ *===================================*/
 .weather {
   color: white;
-  float:right;
+  float: right;
 }
+
 .weather_element{
-  height:50px;
-  float:right;
-  margin-right:10px;
+  float: right;
+  height: 50px;
+  margin-right: 10px;
 }
