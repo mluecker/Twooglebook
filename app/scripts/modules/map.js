@@ -14,39 +14,6 @@ function(Backbone, Config, Template, Ol) {
     }
   });
 
-  Map.GeocodingModel = Backbone.Model.extend({
-
-    sync: function(method, model, options) {
-      var params = _.extend({
-        type:         'GET',
-        dataType:     'jsonp',
-        url:          model.url(),
-        jsonp:        "callback",
-        processData:  false
-      }, options);
-   
-      // Make the request.
-      return $.ajax(params);
-    },
-
-    url: function() {
-
-      console.log(this);
-
-      var latitude = this.get('latitude');
-      var longitude = this.get('longitude');
-
-      return 'http://beta.geocoding.cloudmade.com/v3/'+ Config.cloudemade.apiKey +'/api/geo.location.search.2?format=json&source=OSM&enc=UTF-8&limit=10&q='+ latitude +';'+ longitude +'';
-    }, 
-
-    parse: function(response) {
-
-      console.log(response);
-
-      return response;
-    }
-  })
-
   Map.View = Backbone.View.extend({
 
     template: _.template(Template),
@@ -59,6 +26,8 @@ function(Backbone, Config, Template, Ol) {
       this.listenTo(Backbone, 'setPlacesToMap', this.addPlacesToMap);
 
       this.listenTo(Backbone, 'highlightFeature', this.highlightFeature);
+
+      this.listenTo(Backbone, 'setNewLocation', this.setMapCenter);
 
       this.getCenterPosition();
       },
@@ -88,19 +57,6 @@ function(Backbone, Config, Template, Ol) {
       var latitude = this.model.get('position').coords.latitude;
       var longitude = this.model.get('position').coords.longitude;
 
-      this.geoCodeModel = new Map.GeocodingModel();
-      this.geoCodeModel.set({
-        latitude: latitude,
-        longitude: longitude
-      })
-      this.geoCodeModel.fetch({
-        success: function(response) {
-          console.log(response);
-          $('#adress').text(response.get('places')[0].street)
-        }
-      });
-
-
       this.map = new OpenLayers.Map({
         div: "map-container",
         controls: [
@@ -121,8 +77,12 @@ function(Backbone, Config, Template, Ol) {
           new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
         ), 
         15 // Zoom level
-      );   
+      );
 
+      this.setHomeMarker(latitude, longitude);
+    },
+
+    setHomeMarker: function(lat, lon) {
       var defaultStyle = new OpenLayers.Style({
         'externalGraphic': 'img/home.png',
         'graphicWidth'    : 36,
@@ -131,26 +91,43 @@ function(Backbone, Config, Template, Ol) {
         'title'           : '${tooltip}'
       });
 
-      var homeLayer = new OpenLayers.Layer.Vector('HomeLayer', {
+      if (this.homeLayer) {
+        this.homeLayer.destroy();
+      }
+
+      this.homeLayer = new OpenLayers.Layer.Vector('HomeLayer', {
         styleMap: new OpenLayers.StyleMap({
           'default': defaultStyle
         })
-      }); 
+      });
 
-       // Add home marker
-      var homeLatitude = this.model.get('position').coords.latitude;
-      var homeLongitude = this.model.get('position').coords.longitude;
-      var homeLocation = new OpenLayers.Geometry.Point(homeLongitude, homeLatitude).transform('EPSG:4326', 'EPSG:3857');
+      var homeLocation = new OpenLayers.Geometry.Point(lon, lat).transform('EPSG:4326', 'EPSG:3857');
       
-      homeLayer.addFeatures([
+      this.homeLayer.destroyFeatures();
+
+      this.homeLayer.addFeatures([
         new OpenLayers.Feature.Vector(homeLocation, {
           tooltip: 'Home',
           id: 'home'
         })
       ]);
 
-      this.map.addLayer(homeLayer);
-      
+      this.map.addLayer(this.homeLayer);
+    },
+
+    setMapCenter: function(newCenter) {
+      var latitude = newCenter.lat;
+      var longitude = newCenter.lon;
+
+      this.map.setCenter(new OpenLayers.LonLat(longitude,latitude)
+        .transform(
+          new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+          new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+        ), 
+        15 // Zoom level
+      );
+
+      this.setHomeMarker(latitude, longitude);
     },
 
     highlightFeature: function(model){
@@ -180,6 +157,10 @@ function(Backbone, Config, Template, Ol) {
         'graphicYOffset'  : -24,
         'title'           : '${tooltip}'
       }); 
+
+      if (this.overlay) {
+        this.overlay.destroy();
+      }
 
       this.overlay = new OpenLayers.Layer.Vector('Overlay', {
         styleMap: new OpenLayers.StyleMap({

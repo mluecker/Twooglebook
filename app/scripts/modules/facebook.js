@@ -6,16 +6,15 @@ define([
 
   window.Facebook={};
 
-  Facebook.Model = Backbone.Model.extend({
-  });
+  Facebook.Model = Backbone.Model.extend({ });
 
   Facebook.Collection = Backbone.Collection.extend({
     initialize: function(models, options){
-      this.query=options.query;
-      this.radius=options.radius;
-      this.access_token=options.access_token;
-      this.lat=options.lat;
-      this.lon=options.lon;
+      this.lat = options.lat;
+      this.lon = options.lon;
+      this.query = options.query;
+      this.radius = options.radius;
+      this.access_token = options.access_token;
     },
 
     url: function(){
@@ -33,7 +32,7 @@ define([
 
      if (params.data) {
        this.query = params.data.query;
-       this.radius=params.data.radius;
+       this.radius = params.data.radius;
      }
 
      params.error = function() {
@@ -86,7 +85,9 @@ define([
 
     render: function(){
       $('.post-list').empty();
+
       $('#resultHead').html('Ergebnisse ('+this.collection.length+')');
+      
       this.collection.each(function(post){
         var ItemView=new Facebook.ItemView({model: post});
         $('.post-list').prepend(ItemView.render().el);

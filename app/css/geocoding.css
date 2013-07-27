@@ -1,0 +1,28 @@
+/**
+ * Styles for the geocoding module
+ *
+ * @author Sascha Müller
+ * @created 26.07.13
+ */
+#geocoding {
+  color: #fff;
+  float: left;
+  height: 50px;
+}
+
+#geocoding .adress {
+  width: 400px;
+}
+
+#geocoding .adress input {
+  color: #fff;
+  margin-top: 9px;
+  background-color: rgba(255, 255, 255, 0);
+}
+
+#geocoding .adress:after {
+  content: 'click to edit';
+  font-style: italic;
+  font-size: 12px;
+  color: #ccc;
+}

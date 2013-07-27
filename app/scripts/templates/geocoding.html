@@ -1,0 +1,10 @@
+<div class="adress">
+  <% 
+    var street = get('places')[0].street;
+    var zip = get('places')[0].zip;
+    var city = get('places')[0].city 
+
+    var adress = street +', '+ zip +' '+ city
+  %>
+  <input class="input-xlarge" type="text" placeholder="<%= adress %>">
+</div>
