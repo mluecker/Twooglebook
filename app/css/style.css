@@ -63,6 +63,19 @@ ul {
   background-color: #f5f5f5;
 }
 
+.place-name {
+  float: left;
+}
+
+.place-category {
+  float: left;
+}
+
+.place-distance {
+  float: right;
+}
+
+
 
 /* Browser Scrollbar
  *===================================*/
