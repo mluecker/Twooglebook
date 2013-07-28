@@ -76,7 +76,7 @@ function(Backbone, Config, Template, Ol) {
           new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
           new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
         ), 
-        15 // Zoom level
+        10 // Zoom level
       );
 
       this.setHomeMarker(latitude, longitude);
@@ -194,7 +194,6 @@ function(Backbone, Config, Template, Ol) {
                 
       this.map.addControl(this.selectControl);
       this.selectControl.activate();
-
       this.map.addLayer(this.overlay);
 
       // Add markers to the map
@@ -211,6 +210,8 @@ function(Backbone, Config, Template, Ol) {
           })
         ]);
       }, this);
+
+      this.map.zoomToExtent(this.overlay.getDataExtent());
     }
   });
 
