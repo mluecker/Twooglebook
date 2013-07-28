@@ -6,7 +6,12 @@ define([
 
   window.Facebook={};
 
-  Facebook.Model = Backbone.Model.extend({ });
+  Facebook.Model = Backbone.Model.extend({ 
+    getIcon: function() {
+      return 'glass';
+    }
+  });
+
 
   Facebook.Collection = Backbone.Collection.extend({
 
@@ -23,7 +28,6 @@ define([
     },
     
     parse : function(response){
-
       var point1 = {
         lat: parseFloat(this.lat),
         lon: parseFloat(this.lon)
@@ -36,7 +40,12 @@ define([
           lon: parseFloat(place.location.longitude)
         }        
 
+        // Calculate the distance between the place and the current location
         place.distance = parseInt(this.calculateDistance(point1, point2) * 1000);
+      
+        // set the class for the icon
+        place.iconClass = this.getIconClass(place.category, place.name);
+      
       }, this);
 
       return response.data;
@@ -70,6 +79,33 @@ define([
       /** Converts numeric degrees to radians */
       return Value * Math.PI / 180;
     },
+
+    getIconClass: function(category, name) {
+      this.category = category;
+
+      var barPattern = name.match(/bar/gi);
+      var pubPattern = name.match(/pub/gi);
+
+      if (barPattern || pubPattern) {
+        this.category = 'Bar';
+      } 
+
+      var icon = {
+        "Bar": "glass",
+        "Club": "music",
+        "Company": "briefcase",
+        "Hotel": "suitcase",
+        "Restaurant/cafe": "food"
+      };
+
+      var knownCategory = _.has(icon, this.category);
+
+      if (!knownCategory) {
+        return 'map-marker';
+      }
+
+      return icon[this.category];
+    },
     
     fetch: function(options) {
      options = options || {};
@@ -99,8 +135,13 @@ define([
     
     className: 'post',
 
+    initialize: function() {
+      // this.model = new Facebook.Model;
+    },
+
     render: function(){
       this.$el.empty().append(this.template(this.model));
+      
       return this;
     },
     
@@ -108,8 +149,13 @@ define([
       'click': '_onClickItem'
     },
     
-    _onClickItem:function(){
+    _onClickItem:function(e){
       var $el = $('#main');
+
+      // var $item = $(e.currentTarget);
+      // $('.post').find('.btn-primary').removeClass('btn-primary').addClass('btn-info');
+      // $item.find('.btn-info').removeClass('btn-info').addClass('btn-primary');
+
       var detailsView = new Details.View({
           model : this.model
       });

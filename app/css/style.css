@@ -33,13 +33,32 @@ body {
 
 /* Places
  *===================================*/
+ul.post-list {
+  margin: 2px !important;
+}
+
+ul.post-list li.post.active .post-item {
+  
+}
+
 .post-item {
   width: -moz-calc(100% - 20px);
   width: -webkit-calc(100% - 20px);
   width: -o-calc(100% - 20px);
   width: calc(100% - 20px);
-  font-size: 14px;
+  font-size: 14px !important;
   text-align: left !important;
+  height: 30px;
+  line-height: 28px !important;
+}
+
+.post-item i {
+  float: left;
+  width: 20px;
+  font-size: 16px;
+  text-align: center;
+  line-height: 28px;
+  margin-right: 10px;
 }
 
 .post-list{
@@ -47,9 +66,6 @@ body {
   list-style-position: inside;
 }
 
-ul {
-  margin: 2px !important;
-}
 
 .post-list-container{
   height: 400px;
@@ -65,6 +81,10 @@ ul {
 
 .place-name {
   float: left;
+  width: 250px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .place-category {
