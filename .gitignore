@@ -4,3 +4,4 @@ app/scripts/vendor/jquery/
 app/scripts/vendor/requirejs/
 app/scripts/vendor/text/
 app/scripts/vendor/underscore-amd/
+app/scripts/vendor/font-awesome/
