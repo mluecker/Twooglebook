@@ -57,9 +57,17 @@ function(Backbone, Config, Template, Ol) {
         'title'           : '${tooltip}'
       }); 
 
+      var homeStyle = new OpenLayers.Style({
+        'externalGraphic': 'img/home.png',
+        'graphicWidth'    : 36,
+        'graphicHeight'   : 36,
+        'graphicYOffset'  : -24,
+        'title'           : '${tooltip}'
+      });
+
       this.homeLayer = new OpenLayers.Layer.Vector('HomeLayer', {
         styleMap: new OpenLayers.StyleMap({
-          'default': defaultStyle
+          'default': homeStyle
         })
       });
 
@@ -141,13 +149,6 @@ function(Backbone, Config, Template, Ol) {
     },
 
     setHomeMarker: function(lat, lon) {
-      var defaultStyle = new OpenLayers.Style({
-        'externalGraphic': 'img/home.png',
-        'graphicWidth'    : 36,
-        'graphicHeight'   : 36,
-        'graphicYOffset'  : -24,
-        'title'           : '${tooltip}'
-      });
 
       var homeLocation = new OpenLayers.Geometry.Point(lon, lat).transform('EPSG:4326', 'EPSG:3857');
       
@@ -206,6 +207,7 @@ function(Backbone, Config, Template, Ol) {
           })
         ]);
       }, this);
+      this.map.zoomToExtent(this.overlay.getDataExtent()); 
     }
   });
 

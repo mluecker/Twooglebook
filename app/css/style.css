@@ -68,7 +68,7 @@ ul.post-list li.post.active .post-item {
 
 
 .post-list-container{
-  height: 400px;
+  height: 404px;
   overflow : auto;
   text-align: left !important;
 }
