@@ -25,7 +25,7 @@ function(Backbone, Config, Template) {
       var latitude = this.get('latitude');
       var longitude = this.get('longitude');
 
-      return 'http://beta.geocoding.cloudmade.com/v3/'+ Config.cloudemade.apiKey +'/api/geo.location.search.2?format=json&source=OSM&enc=UTF-8&limit=10&q='+ latitude +';'+ longitude +'';
+      return 'http://beta.geocoding.cloudmade.com/v3/'+ Config.cloudmade.apiKey +'/api/geo.location.search.2?format=json&source=OSM&enc=UTF-8&limit=10&q='+ latitude +';'+ longitude +'';
     }, 
 
     parse: function(response) {
@@ -50,7 +50,7 @@ function(Backbone, Config, Template) {
     url: function() {
       var querySearch = this.get('querySearch');
 
-      return 'http://beta.geocoding.cloudmade.com/v3/'+ Config.cloudemade.apiKey +'/api/geo.location.search.2?format=json&source=OSM&enc=UTF-8&limit=10&locale=de&q=' + querySearch;
+      return 'http://beta.geocoding.cloudmade.com/v3/'+ Config.cloudmade.apiKey +'/api/geo.location.search.2?format=json&source=OSM&enc=UTF-8&limit=10&locale=de&q=' + querySearch;
     }, 
 
     parse: function(response) {

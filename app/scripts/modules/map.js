@@ -29,38 +29,8 @@ function(Backbone, Config, Template, Ol) {
 
       this.listenTo(Backbone, 'setNewLocation', this.setMapCenter);
 
-      this.getCenterPosition();
-      },
-
-    setCenterPosition: function(position) {
-      this.render();
-    },
-
-    getCenterPosition: function() {
-      var self = this;
-      navigator.geolocation.getCurrentPosition( function(currentPosition) {
-        self.model.set({ position: currentPosition });
-      });
-    },
-
-    render: function() {
-      this.$el.empty().append(this.template(this.model));
-
-      if (this.model.get('position')) {
-        this.renderMap();
-      }
-
-      return this;
-    },
-
-    renderMap: function(position) {
-      var latitude = this.model.get('position').coords.latitude;
-      var longitude = this.model.get('position').coords.longitude;
-
       this.map = new OpenLayers.Map({
-        div: "map-container",
         controls: [
-          new OpenLayers.Control.Attribution(),
           new OpenLayers.Control.Navigation(),
           new OpenLayers.Control.Zoom()
         ],
@@ -71,77 +41,6 @@ function(Backbone, Config, Template, Ol) {
         ]
       });
 
-      this.map.setCenter(new OpenLayers.LonLat(longitude,latitude)
-        .transform(
-          new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-          new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
-        ), 
-        10 // Zoom level
-      );
-
-      this.setHomeMarker(latitude, longitude);
-    },
-
-    setHomeMarker: function(lat, lon) {
-      var defaultStyle = new OpenLayers.Style({
-        'externalGraphic': 'img/home.png',
-        'graphicWidth'    : 36,
-        'graphicHeight'   : 36,
-        'graphicYOffset'  : -24,
-        'title'           : '${tooltip}'
-      });
-
-      if (this.homeLayer) {
-        this.homeLayer.destroy();
-      }
-
-      this.homeLayer = new OpenLayers.Layer.Vector('HomeLayer', {
-        styleMap: new OpenLayers.StyleMap({
-          'default': defaultStyle
-        })
-      });
-
-      var homeLocation = new OpenLayers.Geometry.Point(lon, lat).transform('EPSG:4326', 'EPSG:3857');
-      
-      this.homeLayer.destroyFeatures();
-
-      this.homeLayer.addFeatures([
-        new OpenLayers.Feature.Vector(homeLocation, {
-          tooltip: 'Home',
-          id: 'home'
-        })
-      ]);
-
-      this.map.addLayer(this.homeLayer);
-    },
-
-    setMapCenter: function(newCenter) {
-      var latitude = newCenter.lat;
-      var longitude = newCenter.lon;
-
-      this.map.setCenter(new OpenLayers.LonLat(longitude,latitude)
-        .transform(
-          new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-          new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
-        ), 
-        15 // Zoom level
-      );
-
-      this.setHomeMarker(latitude, longitude);
-    },
-
-    highlightFeature: function(model){
-
-      this.selectControl.unselectAll();
-
-      var even = _.find(this.overlay.features, function(feature,index){
-        return feature.attributes.id == model.attributes.name;
-      });
-      
-      this.selectControl.select(even);
-    },
-
-    addPlacesToMap: function(models) {
       var defaultStyle = new OpenLayers.Style({
         'externalGraphic': 'img/marker.png',
         'graphicWidth' : 28,
@@ -158,9 +57,11 @@ function(Backbone, Config, Template, Ol) {
         'title'           : '${tooltip}'
       }); 
 
-      if (this.overlay) {
-        this.overlay.destroy();
-      }
+      this.homeLayer = new OpenLayers.Layer.Vector('HomeLayer', {
+        styleMap: new OpenLayers.StyleMap({
+          'default': defaultStyle
+        })
+      });
 
       this.overlay = new OpenLayers.Layer.Vector('Overlay', {
         styleMap: new OpenLayers.StyleMap({
@@ -192,9 +93,105 @@ function(Backbone, Config, Template, Ol) {
         }
       )
                 
-      this.map.addControl(this.selectControl);
-      this.selectControl.activate();
       this.map.addLayer(this.overlay);
+
+      this.map.addLayer(this.homeLayer);
+
+      this.map.addControl(this.selectControl);
+
+      this.getCenterPosition();
+    },
+
+    setCenterPosition: function(position) {
+      this.render();
+    },
+
+    getCenterPosition: function() {
+      var self = this;
+      navigator.geolocation.getCurrentPosition( function(currentPosition) {
+        self.model.set({ position: currentPosition });
+      });
+    },
+
+    render: function() {
+      this.$el.empty().append(this.template(this.model));
+
+      if (this.model.get('position')) {
+        this.renderMap();
+      }
+
+      return this;
+    },
+
+    renderMap: function(position) {
+      var latitude = this.model.get('position').coords.latitude;
+      var longitude = this.model.get('position').coords.longitude;
+
+      this.map.render('map-container');
+
+      this.map.setCenter(new OpenLayers.LonLat(longitude,latitude)
+        .transform(
+          new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+          new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+        ), 
+        15 // Zoom level
+      );
+
+      this.setHomeMarker(latitude, longitude);
+    },
+
+    setHomeMarker: function(lat, lon) {
+      var defaultStyle = new OpenLayers.Style({
+        'externalGraphic': 'img/home.png',
+        'graphicWidth'    : 36,
+        'graphicHeight'   : 36,
+        'graphicYOffset'  : -24,
+        'title'           : '${tooltip}'
+      });
+
+      var homeLocation = new OpenLayers.Geometry.Point(lon, lat).transform('EPSG:4326', 'EPSG:3857');
+      
+      this.homeLayer.destroyFeatures();
+
+      this.homeLayer.addFeatures([
+        new OpenLayers.Feature.Vector(homeLocation, {
+          tooltip: 'Home',
+          id: 'home'
+        })
+      ]);
+    },
+
+    setMapCenter: function(newCenter) {
+      var latitude = newCenter.lat;
+      var longitude = newCenter.lon;
+
+      this.map.setCenter(new OpenLayers.LonLat(longitude,latitude)
+        .transform(
+          new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+          new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+        ), 
+        15 // Zoom level
+      );
+
+      this.setHomeMarker(latitude, longitude);
+    },
+
+    highlightFeature: function(model){
+
+      this.selectControl.unselectAll();
+
+      var even = _.find(this.overlay.features, function(feature,index){
+        return feature.attributes.id == model.attributes.name;
+      });
+      
+      this.selectControl.select(even);
+    },
+
+    addPlacesToMap: function(models) {
+
+      this.selectControl.activate();
+
+      this.overlay.destroyFeatures();
 
       // Add markers to the map
       _.each(models, function(model) {
@@ -202,7 +199,6 @@ function(Backbone, Config, Template, Ol) {
         var longitude = model.get('location').longitude;
         var locationName = model.get('name');
         var myLocation = new OpenLayers.Geometry.Point(longitude, latitude).transform('EPSG:4326', 'EPSG:3857');
-
         this.overlay.addFeatures([
           new OpenLayers.Feature.Vector(myLocation, {
             tooltip: locationName,
@@ -210,8 +206,6 @@ function(Backbone, Config, Template, Ol) {
           })
         ]);
       }, this);
-
-      this.map.zoomToExtent(this.overlay.getDataExtent());
     }
   });
 
