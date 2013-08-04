@@ -7,6 +7,7 @@
     "jquery"          : "latest",
     "backbone-amd"    : "latest",
     "underscore-amd"  : "latest",
-    "font-awesome"    : "latest"
+    "font-awesome"    : "latest",
+	"bootstrap"	      : "latest"
   }
 }
