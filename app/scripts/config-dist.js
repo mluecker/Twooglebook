@@ -9,7 +9,7 @@ define(function() {
       appId: 'YOUR_OPENWEATHER_ID'
     },
     cloudmade: {
-      apiKey: 'YOUR_CLOUDEMADE_APIKEY'
+      apiKey: 'YOUR_CLOUDMADE_APIKEY'
     }
   };
   return Config;
