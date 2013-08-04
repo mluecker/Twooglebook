@@ -58,7 +58,7 @@ ul.post-list {
 
 .post-item i {
   float: left;
-  width: 20px;
+  width: 30px;
   font-size: 16px;
   text-align: center;
   margin-top:5px;
@@ -84,7 +84,7 @@ ul.post-list {
 
 .place-name {
   float: left;
-  width: 320px;
+  width: 245px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
