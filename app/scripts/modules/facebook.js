@@ -133,7 +133,7 @@ define([
     
     tagName: 'li',
     
-    className: 'post',
+    className: 'list-group-item btn btn-small btn-info post-item post',
 
     initialize: function() {
       // this.model = new Facebook.Model;
@@ -178,7 +178,7 @@ define([
     render: function(){
       $('.post-list').empty();
 
-      $('#resultHead').html('Ergebnisse ('+this.collection.length+')');
+      $('#resultHead span').html(this.collection.length);
       
       this.collection.each(function(post){
         var ItemView = new Facebook.ItemView({

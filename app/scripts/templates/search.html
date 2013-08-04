@@ -1,18 +1,36 @@
 <div class="well well-small">
 	<form>
- 		<div class="input-append">
- 			<label>What are you looking for?</label>
-			<input class="span12" id="appendedInputButton" placeholder="e.g. Pub" type="text">
-			<button class="btn search-place" type="button"><i class="icon-search"></i></button>
- 		</div>
+
+	<div class="row">
+		<div class="col-lg-12">
+			<label>What are you looking for?</label>
+		</div>
+	</div>
+	
+	<div class="row">
+	  <div class="col-lg-12">
+	    <div class="input-group">
+	      <input type="text" class="form-control">
+	      <span class="input-group-btn">
+	        <button class="btn btn-default" type="button">Go!</button>
+	      </span>
+	    </div><!-- /input-group -->
+	  </div><!-- /.col-lg-6 -->
+	</div><!-- /.row -->
+
+
+	<div class="row">
+	  <div class="col-lg-12">
  		<input type="checkbox" id="read_more" role="button">
- 		<label for="read_more" onclick="">
+ 		<label class="col-lg-12" for="read_more" onclick="">
  			<span>More options <i class="icon-chevron-down"></i></span>
  			<span>hide <i class="icon-chevron-up"></i></span>
  		</label> 
  		<section id="detail-search">
   			<label>Search radius in m (max. 50000)</label>
-  			<input class="span12" id="radius" placeholder="e.g. 5000" type="text">
+  			<input class="form-control" id="radius" placeholder="e.g. 5000" type="text">
   	  	</section>  
+  	  	  </div><!-- /.col-lg-6 -->
+	</div><!-- /.row -->	
 	</form>
 </div>
