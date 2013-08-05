@@ -1,8 +1,9 @@
 define([
   'backbone',
   'modules/details',
-  'text!templates/facebook.html'
-  ], function(Backbone, Details, Template) {
+  'text!templates/facebookMain.html',
+  'text!templates/facebookItem.html'
+  ], function(Backbone, Details, TemplateMain, TemplateItem) {
 
   window.Facebook={};
 
@@ -11,7 +12,6 @@ define([
       return 'glass';
     }
   });
-
 
   Facebook.Collection = Backbone.Collection.extend({
 
@@ -127,17 +127,31 @@ define([
    }
   });
 
+  Facebook.MainView = Backbone.View.extend({
+    
+    template: _.template(TemplateMain),
+
+    initialize: function() {
+
+    }, 
+    
+    render: function() {
+      this.$el.empty().append(this.template(this.model));
+      
+      return this;
+    }
+
+  });
+
   Facebook.ItemView = Backbone.View.extend({
     
-    template: _.template(Template),
+    template: _.template(TemplateItem),
     
     tagName: 'li',
     
     className: 'list-group-item btn btn-small btn-info post-item post',
 
-    initialize: function() {
-      // this.model = new Facebook.Model;
-    },
+    initialize: function() { },
 
     render: function(){
       this.$el.empty().append(this.template(this.model));

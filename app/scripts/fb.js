@@ -1,9 +1,15 @@
 define(['facebook', 'config'], function(){
-  FB.init({
-    appId : Config.facebook.appId,
-    channelUrl : Config.facebook.channelUrl
-  });
-  FB.getLoginStatus(function(response) {
+  
+  FB.Event.subscribe('auth.statusChange', function (response) {
     Backbone.trigger('setAccess_Token',response.authResponse.accessToken);
   });
+
+  FB.init({
+    appId : Config.facebook.appId,
+    channelUrl : Config.facebook.channelUrl,
+    status: true, // check login status
+    cookie: true, // enable cookies to allow the server to access the session
+    xfbml: true  // parse XFBML
+  });
+
 });

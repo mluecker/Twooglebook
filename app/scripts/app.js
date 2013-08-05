@@ -7,7 +7,7 @@ define([
   'modules/geocoding',
   'text!templates/main.html',
   'fb'
-  ], function(Backbone, Facebook, Map, Weather, Search, Geocoding, Template ) {
+  ], function(Backbone, Facebook, Map, Weather, Search, Geocoding, Template) {
 
   window.App={};
 
@@ -41,6 +41,9 @@ define([
 
       this.listenTo(Backbone, 'setNewLocation', this.setNewLocation);
 
+      // FacebookMain View
+      this.facebookMainView = new Facebook.MainView();
+
       // Map View
       this.mapView = new Map.View();
 
@@ -61,8 +64,16 @@ define([
       });
     },
 
+    events: {
+      'click .login': '_onFBLogin'
+    },
+
     render: function(){
       this.$el.empty().append(this.template(this.model));
+
+      // render the facebookMain-view
+      this.facebookMainView.setElement(this.$el.find('#facebooContainer'));
+      this.facebookMainView.render();
 
       // render the map-view
       this.mapView.setElement(this.$el.find('#map'));
@@ -73,6 +84,21 @@ define([
       this.searchView.render();
 
       return this;
+    },
+
+    _onFBLogin: function() {
+      FB.login(function(response) {
+        console.log(response);
+         if (response.authResponse) {
+           console.log('Welcome!  Fetching your information.... ');
+           FB.api('/me', function(response) {
+             console.log('Good to see you, ' + response.name + '.');
+             console.log(response);
+           });
+         } else {
+           console.log('User cancelled login or did not fully authorize.');
+         }
+       });
     },
 
     _onReceiveAccessToken: function(access_token){
