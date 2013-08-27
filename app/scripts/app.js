@@ -41,6 +41,23 @@ define([
 
       this.listenTo(Backbone, 'setNewLocation', this.setNewLocation);
 
+      // Facebook View
+      // this.facebookMainView = new Facebook.MainView();
+
+      this.facebookCollection = new Facebook.Collection([], {
+          query: 'Bar',
+          radius: '5000',
+          lat: 0,
+          lon: 0,
+          access_token: null
+        });
+
+      this.facebookMainView = new Facebook.MainView({
+        collection: self.facebookCollection
+      });
+      this.facebookMainView.setElement(this.$el.find('.post-list'));
+      this.facebookMainView.render();
+
       // Map View
       this.mapView = new Map.View();
 
@@ -64,11 +81,15 @@ define([
     render: function(){
       this.$el.empty().append(this.template(this.model));
 
-      // render the map-view
+      // render the facebookMainvView
+      this.facebookMainView.setElement(this.$el.find('#facebook'));
+      this.facebookMainView.render();
+
+      // render the mapView
       this.mapView.setElement(this.$el.find('#map'));
       this.mapView.render();
 
-      // render the search-view
+      // render the searchView
       this.searchView.setElement(this.$el.find('#search'));
       this.searchView.render();
 
@@ -91,19 +112,15 @@ define([
         
         this.facebookCollection = new Facebook.Collection([], {
           query: 'bar',
-          radius: '10000',
+          radius: '2000',
           lat: latitude,
           lon: longitude,
           access_token: this.model.get('access_token')
         });
 
         this.facebookCollection.fetch({
-          success: function(){
-            self.facebookView = new Facebook.ListView({
-              collection: self.facebookCollection
-            });
-            self.facebookView.setElement(self.$el.find('.post-list'));
-            self.facebookView.render();
+          success: function(response, model){
+            Backbone.trigger('collectionFetched', response);
           }
         });
 
@@ -136,14 +153,15 @@ define([
     setNewLocation: function(newLocation) {
       var self = this;
 
-      this.facebookView.collection.lat = newLocation.lat;
-      this.facebookView.collection.lon = newLocation.lon;
+      var access_token = this.model.get('access_token');
 
-      this.facebookView.collection.remove();
-
-      this.facebookView.collection.fetch({
+      this.facebookMainView.collection.access_token = access_token;
+      this.facebookMainView.collection.lat = newLocation.lat;
+      this.facebookMainView.collection.lon = newLocation.lon;
+      this.facebookMainView.collection.remove();
+      this.facebookMainView.collection.fetch({
         success: function(model, response) {
-          self.facebookView.render();
+          Backbone.trigger('updateCollection', response);
         }
       });
     },
@@ -153,13 +171,13 @@ define([
       var searchValue = model.get('searchValue');
       var radiusValue = model.get('radiusValue');
 
-      this.facebookView.collection.remove();
+      this.facebookMainView.collection.remove();
 
-      this.facebookView.collection.fetch({
+      this.facebookMainView.collection.fetch({
         data: {query: searchValue,
         radius: radiusValue},
         success: function() {
-          self.facebookView.render();
+          self.facebookMainView.render();
         }
       });
     }

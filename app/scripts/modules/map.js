@@ -171,6 +171,8 @@ function(Backbone, Config, Template, Ol) {
           ]);
         }, this);
 
+        // ToDo: calculate the extent from the home location and the places
+
         this.map.zoomToExtent(this.featureLayer.getDataExtent());
 
       } else {

@@ -34,7 +34,6 @@ function(Backbone, Config, Template) {
   })
 
   Geocoding.Model = Backbone.Model.extend({
-
     sync: function(method, model, options) {
       var params = _.extend({
         type:         'GET',
@@ -86,6 +85,8 @@ function(Backbone, Config, Template) {
 
       this.model.fetch({
         success: function(model, response) {
+          // ToDo: Fallback for an empty result
+
           Backbone.trigger('setNewLocation', response.places[0].position);
         }
       });
