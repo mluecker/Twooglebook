@@ -30,26 +30,32 @@ function(Backbone, Template) {
      return this;
    },
 
-   _onSubmit: function(e) {
-     e.preventDefault();
+  _onSubmit: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
 
-     var searchValue = this.$el.find('#appendedInputButton').val();
-     //var whereValue = this.$el.find('#where').val();
-     var radiusValue = this.$el.find('#radius').val();
+    var searchValue = this.$el.find('#appendedInputButton').val();
+    var radiusValue = this.$el.find('#radius').val();
 
-     if(radiusValue == ""){
-      radiusValue=5000;
-     }
-      if(parseInt(radiusValue) > 50000){
-      radiusValue=50000;
+    if(radiusValue == ""){
+      radiusValue = 5000;
+    }
+  
+    if(parseInt(radiusValue) > 50000){
+      radiusValue = 50000;
       this.$el.find('#radius').val('50000');
-     }
+    }
 
-     this.model.set({ 
-        searchValue: searchValue,
-        //whereValue: whereValue,
-        radiusValue: radiusValue
-      });
+    var searchValues = {
+      searchValue: searchValue,
+      radiusValue: radiusValue
+    }
+
+    Backbone.trigger('newSearch', searchValues);
+    // this.model.set({ 
+    //   searchValue: searchValue,
+    //   radiusValue: radiusValue
+    // });
    }
 
  });

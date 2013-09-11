@@ -14,30 +14,28 @@ define([
 
   var Facebook = {};
 
-  Facebook.Model = Backbone.Model.extend({ 
-    getIcon: function() {
-      return 'glass';
-    }
-  });
+  Facebook.Model = Backbone.Model.extend({ });
 
   Facebook.Collection = Backbone.Collection.extend({
 
-    initialize: function(models, options){
-      this.lat = options.lat;
-      this.lon = options.lon;
-      this.query = options.query;
-      this.radius = options.radius;
-      this.access_token = options.access_token;
+    initialize: function(){
+      this.updatedData = {
+        lat          : 0,
+        lon          : 0,
+        query        : '',
+        radius       : 0,
+        access_token : ''
+      };
     },
 
     url: function(){
-      return "https://graph.facebook.com/search?q="+ this.query +"&type=place&limit=1000&center="+ this.lat +","+ this.lon +"&distance="+this.radius+"&access_token=" + this.access_token;
+      return "https://graph.facebook.com/search?q="+ this.updatedData.query +"&type=place&limit=1000&center="+ this.updatedData.lat +","+ this.updatedData.lon +"&distance="+this.updatedData.radius+"&access_token=" + this.updatedData.access_token;
     },
     
     parse : function(response){
       var point1 = {
-        lat: parseFloat(this.lat),
-        lon: parseFloat(this.lon)
+        lat: parseFloat(this.updatedData.lat),
+        lon: parseFloat(this.updatedData.lon)
       }
 
       _.each(response.data, function(place) {
@@ -127,24 +125,7 @@ define([
       }
 
       return icon[this.category];
-    },
-    
-    fetch: function(options) {
-     options = options || {};
-     var self = this;
-     var params = _.clone(options);
-
-     if (params.data) {
-       this.query = params.data.query;
-       this.radius = params.data.radius;
-     }
-
-     params.error = function() { };
-
-     params.success = function(model, resp, options) { };
-
-     return Backbone.Collection.prototype.fetch.call(this, options);
-   }
+    }
   });
 
   Facebook.MainView = Backbone.View.extend({
@@ -153,9 +134,23 @@ define([
 
     initialize: function() {
       this.model = new Facebook.Model;
-      
-      this.listenTo(Backbone, 'collectionFetched', this.initSubviews);
-      this.listenTo(Backbone, 'updateCollection', this._onSetNewLocation);
+
+      this.collection = new Facebook.Collection();
+
+      this.listenTo(Backbone, 'updateFBCollection', this._onUpdateFBData);    
+
+      this.listenTo(this.collection, 'reset', this.initSubviews); 
+    },
+
+    _onUpdateFBData: function(update) {
+      this.collection.updatedData = {
+        lat          : update.latitude,
+        lon          : update.longitude,
+        query        : update.searchValue,
+        radius       : update.radiusValue,
+        access_token : update.access_token
+      };
+      this.collection.fetch({reset :true});
     },
 
     render: function(){
@@ -172,7 +167,6 @@ define([
       var $el = $(e.target);
 
       $el.toggleClass('active')
-
       $el.siblings('.dropdown-menu').toggle();
     },
 
@@ -195,10 +189,6 @@ define([
 
     _onUpdateFilter: function(filterItems) {
       this.listView.applyFilter(filterItems)
-    },
-
-    _onSetNewLocation: function(model) {
-      this.listView.collection.reset(model.data);
     }
 
   });
@@ -288,7 +278,7 @@ define([
     initialize: function() { 
       this.model = new Facebook.Model;
 
-      this.collection.on('reset', this.render,this);
+      this.collection.on('reset', this.render, this);
 
       this.filterArray = [];
     },
@@ -324,7 +314,6 @@ define([
       }
       this.model.trigger('change:filterItem', this.filterArray, this);
     }
-
   });
 
   Facebook.ItemView = Backbone.View.extend({
@@ -335,7 +324,9 @@ define([
     
     className: 'list-group-item btn btn-small btn-info post-item post',
 
-    initialize: function() { },
+    initialize: function() {
+      this.collection = Facebook.Collection;
+    },
 
     render: function(){
       this.$el.empty().append(this.template(this.model));
@@ -364,8 +355,6 @@ define([
   Facebook.ListView = Backbone.View.extend({
     
     initialize: function(){
-      this.collection.on('reset', this.render, this);
-
       this.listenTo(Backbone, 'clickOnMapMarker', this.clickOnMapMarker);
 
       this.filterItems = [];
@@ -373,7 +362,7 @@ define([
 
     render: function(){
       $('.post-list').empty();
-      
+
       if (this.filterItems.length !== 0) {
         var filteredList = this.collection.filter(function(place) {
           var contains = _.contains(this.filterItems, place.get('category'));

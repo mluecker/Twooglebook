@@ -23,14 +23,6 @@ define([
     model: new App.Model(),
 
     initialize: function(){
-      // OAuth.initialize('h7CfdBhjN4lmcwXB7wrej3rvRog');
-      // OAuth.popup('facebook', function(error, result) {
-      //   // self._onReceiveAccessToken(result.access_token);
-      // });
-      //OAuth.popup('twitter', function(error, result) {
-      // console.log(result);
-      //});
-
       var self = this;
 
       this.listenTo(Backbone, 'setAccess_Token', this._onReceiveAccessToken);
@@ -39,24 +31,12 @@ define([
 
       this.model.on('change:position', this._onPrepareFacebookCollection, this);
 
-      this.listenTo(Backbone, 'setNewLocation', this.setNewLocation);
+      this.listenTo(Backbone, 'setNewLocation', this.updateFacebook);
+
+      this.listenTo(Backbone, 'newSearch', this.updateFacebook);
 
       // Facebook View
-      // this.facebookMainView = new Facebook.MainView();
-
-      this.facebookCollection = new Facebook.Collection([], {
-          query: 'Bar',
-          radius: '5000',
-          lat: 0,
-          lon: 0,
-          access_token: null
-        });
-
-      this.facebookMainView = new Facebook.MainView({
-        collection: self.facebookCollection
-      });
-      this.facebookMainView.setElement(this.$el.find('.post-list'));
-      this.facebookMainView.render();
+      this.facebookMainView = new Facebook.MainView();
 
       // Map View
       this.mapView = new Map.View();
@@ -69,8 +49,6 @@ define([
 
       // Search-View
       this.searchView = new Search.View();
-      this.searchView.model.on('change:searchValue',this._onChangeSearchValue, this);
-      this.searchView.model.on('change:radiusValue',this._onChangeSearchValue, this);
 
       // get the current location
       navigator.geolocation.getCurrentPosition( function(currentPosition) {
@@ -97,7 +75,7 @@ define([
     },
 
     _onReceiveAccessToken: function(access_token){
-      this.model.set({access_token:access_token});
+      this.model.set({ access_token: access_token });
     },
     
     _onPrepareFacebookCollection: function(model){
@@ -110,19 +88,14 @@ define([
         var latitude = this.model.get('position').coords.latitude;
         var longitude = this.model.get('position').coords.longitude;
         
-        this.facebookCollection = new Facebook.Collection([], {
-          query: 'bar',
-          radius: '2000',
-          lat: latitude,
-          lon: longitude,
+        var updatedFDData = {
+          latitude: latitude,
+          longitude: longitude,
+          radiusValue: 5000,
+          searchValue: 'Bar',
           access_token: this.model.get('access_token')
-        });
-
-        this.facebookCollection.fetch({
-          success: function(response, model){
-            Backbone.trigger('collectionFetched', response);
-          }
-        });
+        }
+        Backbone.trigger('updateFBCollection', updatedFDData);
 
         // Set the Properties to render the Weather-View
         this.weatherView.setElement(this.$el.find('#weather'));
@@ -150,36 +123,15 @@ define([
       }
     },
 
-    setNewLocation: function(newLocation) {
-      var self = this;
-
-      var access_token = this.model.get('access_token');
-
-      this.facebookMainView.collection.access_token = access_token;
-      this.facebookMainView.collection.lat = newLocation.lat;
-      this.facebookMainView.collection.lon = newLocation.lon;
-      this.facebookMainView.collection.remove();
-      this.facebookMainView.collection.fetch({
-        success: function(model, response) {
-          Backbone.trigger('updateCollection', response);
-        }
-      });
-    },
-
-    _onChangeSearchValue: function(model) {
-      var self = this;
-      var searchValue = model.get('searchValue');
-      var radiusValue = model.get('radiusValue');
-
-      this.facebookMainView.collection.remove();
-
-      this.facebookMainView.collection.fetch({
-        data: {query: searchValue,
-        radius: radiusValue},
-        success: function() {
-          self.facebookMainView.render();
-        }
-      });
+    updateFacebook: function(model) {
+      var updatedFDData = {
+        access_token: this.model.get('access_token'),
+        latitude: model.lat || this.model.get('position').coords.latitude,
+        longitude: model.lon || this.model.get('position').coords.longitude,
+        radiusValue: model.radiusValue || 5000,
+        searchValue: model.searchValue || 'Bar'
+      }
+      Backbone.trigger('updateFBCollection', updatedFDData);
     }
   });
 

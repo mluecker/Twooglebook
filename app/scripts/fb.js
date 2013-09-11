@@ -4,6 +4,6 @@ define(['facebook', 'config'], function(){
     channelUrl : Config.facebook.channelUrl
   });
   FB.getLoginStatus(function(response) {
-    Backbone.trigger('setAccess_Token',response.authResponse.accessToken);
+    Backbone.trigger('setAccess_Token', response.authResponse.accessToken);
   });
 });
