@@ -7,7 +7,7 @@ define([
   'modules/geocoding',
   'text!templates/main.html',
   'fb'
-  ], function(Backbone, Facebook, Map, Weather, Search, Geocoding, Template ) {
+  ], function(Backbone, Facebook, Map, Weather, Search, Geocoding, Template) {
 
   window.App={};
 
@@ -56,6 +56,10 @@ define([
       });
     },
 
+    events: {
+      'click .login': '_onFBLogin'
+    },
+
     render: function(){
       this.$el.empty().append(this.template(this.model));
 
@@ -74,7 +78,31 @@ define([
       return this;
     },
 
+    _onFBLogin: function() {
+      var self = this;
+      var hasAccess_token = this.model.get('access_token') ? true : false;
+      if(!hasAccess_token){
+        FB.login(function(response) {
+         if (response.authResponse) {
+           console.log('Welcome!  Fetching your information.... ');
+           FB.api('/me', function(response) {
+             //console.log('Good to see you, ' + response.name + '.');
+           });
+         } else {
+           //console.log('User cancelled login or did not fully authorize.');
+         }
+       });
+      }else{
+        FB.logout(function(response) {
+          $('.login').empty().html('Login');
+          self.model.unset('access_token');
+        });
+      }
+
+    },
+
     _onReceiveAccessToken: function(access_token){
+      $('.login').empty().html('Logout');
       this.model.set({ access_token: access_token });
     },
     
