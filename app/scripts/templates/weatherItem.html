@@ -1,0 +1,8 @@
+<div class="weather-date"><%= getDate(get('dt')) %></div>
+<div class="weather-day"><%= get('temp').day.toFixed(1) %>&ordm;</div>
+<div class="weather-second">
+  <div class="weather-max"><i class="icon-caret-up"></i> <%= get('temp').max.toFixed(1) %>&ordm;</div>
+ <div class="weather-min"><i class="icon-caret-down"></i> <%= get('temp').min.toFixed(1) %>&ordm;</div>
+</div>
+<div class="weather-description"><%= get('weather')[0].description %></div>
+<div class="weather-icon"><img src="img/weather/<%= get('weather')[0].icon %>.png" alt=""></div>

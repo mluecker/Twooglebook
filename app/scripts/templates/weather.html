@@ -1,5 +1,10 @@
-<div class="weather">
-<div class="weather_element">Wind: <%=  get('wind').speed %> m/s</div>
-<div class="weather_element">Temperature: <%=  get('temp_deg') %> °C</div>
-<div class="weather_element"><%=  get('weather')[0].description %></div>
+<div class="tab-bar go-left" data-moving="left">
+  <i class="icon-chevron-left"></i>
 </div>
+<div class="weather-carousel">
+  <section class="weather-list"></section>
+</div>
+<div class="tab-bar go-right" data-moving="right">
+  <i class="icon-chevron-right"></i>
+</div>
+

@@ -1,78 +1,115 @@
 define([
  'backbone',
  'config',
- 'text!templates/weather.html'
+ 'text!templates/weather.html',
+ 'text!templates/weatherItem.html'
 ],
-function(Backbone, Config, Template) {
+function(Backbone, Config, Template, ItemTemplate) {
  
- var Weather = {};
+  var Weather = {};
 
- Weather.Model = Backbone.Model.extend({
-    sync: function(method, model, options) {
-    // Default JSON-request options.
-    var params = _.extend({
-      type:         'GET',
-      dataType:     'jsonp',
-      url:      model.url(),
-      jsonp:    "callback",   // the api requires the jsonp callback name to be this exact name
-      processData:  false
-    }, options);
- 
-    // Make the request.
-    return $.ajax(params);
-  },
+  Weather.Model = Backbone.Model.extend({
 
-  url: function(){
-    return 'http://openweathermap.org/data/2.5/weather?lat='+this.get('latitude')+'&lon='+this.get('longitude')+'&APPID='+Config.openweather.appId;
-  },
+    url: function(){
+      var lat = '?lat='+ this.get('latitude');
+      var lon = '&lon='+ this.get('longitude');
+      var appId = Config.openweather.appId;
+      var path = 'http://openweathermap.org/data/2.5/forecast/daily';
+
+      return path + lat + lon +'&cnt=3&units=metric&lang=de&callback=?&APPID='+appId;
+    },
   
-  parse: function(response){
-    return response;
-  }
- });
+    parse: function(response){
+      return response;
+    }
+  });
 
- Weather.View = Backbone.View.extend({
+  Weather.ItemModel = Backbone.Model.extend({
+    getDate: function(timestamp) {
+      return new Date(timestamp*1000).toLocaleDateString();
+    }
+  });
 
-   template: _.template(Template),
+  Weather.ItemView = Backbone.View.extend({
 
-   className : "weather",
+    template: _.template(ItemTemplate),
 
-   initialize: function() {
-    this.model = new Weather.Model;
+    className: 'weather-item',
 
-    // this.model.on('change:latitude', this.render, this);
+    render: function() {
+      this.$el.empty().append(this.template(this.model));
 
-    this.listenTo(Backbone, 'setNewLocation', this.setNewLocation);
-   },
+      return this;
+    }
+  });
+
+  Weather.View = Backbone.View.extend({
+
+    template: _.template(Template),
+
+    className : "weather",
+
+    initialize: function() {
+      this.model = new Weather.Model;
+
+      this.listenTo(Backbone, 'setNewLocation', this.setNewLocation);
+
+      this.width = 0;
+    },
+
+    events: {
+      'click .go-right': '_onClickArrow',
+      'click .go-left': '_onClickArrow'
+    },
    
-   render: function() {
-     var temp_deg = (parseFloat(this.model.get('main').temp)-273.15).toFixed(1);
+    render: function() {
+      this.$el.empty().append(this.template(this.model));
+      
+      var weatherItems = this.model.get('list');
 
-     this.model.set({
-      temp_deg: temp_deg
-     });
-
-     this.$el.empty().append(this.template(this.model));
+      for (var i = weatherItems.length-1; i >= 0; i--) {
+        var itemViewModel = new Weather.ItemModel(weatherItems[i]);
+        var itemView = new Weather.ItemView({
+          model: itemViewModel
+        })
+        this.$el.find('.weather-list').prepend(itemView.render().el);
+      };
      
-     return this;
-   },
+      return this;
+    },
 
-   setNewLocation: function(newLocation) {
-    var self = this;
+    setNewLocation: function(newLocation) {
+      var self = this;
 
-    this.model.set({ 
-      latitude: newLocation.lat,
-      longitude: newLocation.lon
-    });
+      this.model.set({ 
+        latitude: newLocation.lat,
+        longitude: newLocation.lon
+      });
 
-    this.model.fetch({
-      success: function(model, response) {
-        self.render();
+      this.model.fetch({
+        success: function(model, response) {
+          self.render();
+        }
+      });
+    },
+
+    _onClickArrow: function(e) {
+      var $el = $(e.currentTarget);
+      var direction = $el.data('moving');
+      var width = this.width;
+
+      if (direction === 'right') {
+        if (width !== 600) width = width + 300;
+      } else {
+        if (width !== 0) width = width - 300;
       }
-    });
-   }
 
- });
+      this.width = width;
 
- return Weather;
+      $('.weather-list').animate({ right: width}, 300, 'swing');
+    }
+
+  });
+
+  return Weather;
 });
