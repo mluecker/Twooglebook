@@ -25,11 +25,11 @@ define([
     initialize: function(){
       var self = this;
 
+      this.listenTo(this.model, 'change:access_token', this._onPrepareFacebookCollection);
+
+      this.listenTo(this.model, 'change:position', this._onPrepareFacebookCollection);
+      
       this.listenTo(Backbone, 'setAccess_Token', this._onReceiveAccessToken);
-
-      this.model.on('change:access_token', this._onPrepareFacebookCollection, this);
-
-      this.model.on('change:position', this._onPrepareFacebookCollection, this);
 
       this.listenTo(Backbone, 'setNewLocation', this.updateFacebook);
 
@@ -64,16 +64,20 @@ define([
       this.$el.empty().append(this.template(this.model));
 
       // render the facebookMainvView
-      this.facebookMainView.setElement(this.$el.find('#facebook'));
+      this.facebookMainView.setElement(this.$('#facebook'));
       this.facebookMainView.render();
 
       // render the mapView
-      this.mapView.setElement(this.$el.find('#map'));
+      this.mapView.setElement(this.$('#map'));
       this.mapView.render();
 
       // render the searchView
-      this.searchView.setElement(this.$el.find('#search'));
+      this.searchView.setElement(this.$('#search'));
       this.searchView.render();
+
+      // render geocodingView
+      this.geocodingView.setElement(this.$('#geocoding'));
+      this.geocodingView.render();
 
       return this;
     },
@@ -98,7 +102,6 @@ define([
           self.model.unset('access_token');
         });
       }
-
     },
 
     _onReceiveAccessToken: function(access_token){
@@ -126,7 +129,7 @@ define([
         Backbone.trigger('updateFBCollection', updatedFDData);
 
         // Set the Properties to render the Weather-View
-        this.weatherView.setElement(this.$el.find('#weather'));
+        this.weatherView.setElement(this.$('#weather'));
         this.weatherView.model.set({
           latitude: latitude,
           longitude: longitude
@@ -134,18 +137,6 @@ define([
         this.weatherView.model.fetch({
           success: function(){
             self.weatherView.render();
-          }
-        });
-
-        // Set the Properties to render the Geocoding-View
-        this.geocodingView.setElement(this.$el.find('#geocoding'));
-        this.geocodingView.reverseModel.set({
-          latitude: latitude,
-          longitude: longitude
-        });
-        this.geocodingView.reverseModel.fetch({
-          success: function(){
-            self.geocodingView.render();
           }
         });
       }

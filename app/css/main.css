@@ -1,5 +1,6 @@
 @import url('../scripts/vendor/bootstrap/dist/css/bootstrap.min.css');
 @import url('../scripts/vendor/font-awesome/css/font-awesome.min.css');
+@import url('../scripts/vendor/nprogress/nprogress.css');
 @import url('style.css');
 @import url('geocoding.css');
 @import url('weather.css');

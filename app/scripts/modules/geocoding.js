@@ -1,97 +1,182 @@
 define([
   'backbone',
   'config',
-  'text!templates/geocoding.html'
+  'text!templates/geocoding.html',
+  'text!templates/geocodingItem.html',
+  'nprogress'
 ], 
-function(Backbone, Config, Template) {
+function(Backbone, Config, Template, ItemTemplate) {
   
-  var Geocoding = {};
-
-  Geocoding.ReverseModel = Backbone.Model.extend({
-
-    sync: function(method, model, options) {
-      var params = _.extend({
-        type:         'GET',
-        dataType:     'jsonp',
-        url:          model.url(),
-        jsonp:        "callback",
-        processData:  false
-      }, options);
-   
-      return $.ajax(params);
-    },
-
-    url: function() {
-      var latitude = this.get('latitude');
-      var longitude = this.get('longitude');
-
-      return 'http://beta.geocoding.cloudmade.com/v3/'+ Config.cloudmade.apiKey +'/api/geo.location.search.2?format=json&source=OSM&enc=UTF-8&limit=10&q='+ latitude +';'+ longitude +'';
-    }, 
-
-    parse: function(response) {
-      return response;
-    }
-  })
+  var Geocoding = {
+    locationSearch: true
+  };
 
   Geocoding.Model = Backbone.Model.extend({
-    sync: function(method, model, options) {
-      var params = _.extend({
-        type:         'GET',
-        dataType:     'jsonp',
-        url:          model.url(),
-        jsonp:        "callback",
-        processData:  false
-      }, options);
-   
-      return $.ajax(params);
+
+    defaults: {
+      querySearch: ""
+    },
+
+    initialize: function() {
+      
     },
 
     url: function() {
-      var querySearch = this.get('querySearch');
+      var lat = this.get('lat');
+      var lon = this.get('lon');
+      var locationSearch = Geocoding.locationSearch;
 
-      return 'http://beta.geocoding.cloudmade.com/v3/'+ Config.cloudmade.apiKey +'/api/geo.location.search.2?format=json&source=OSM&enc=UTF-8&limit=10&locale=de&q=' + querySearch;
+      var querySearch = this.get('querySearch');
+      var searchUrl = 'http://api.geonames.org/searchJSON?formatted=true&q='+querySearch+'&maxRows=10&lang=en&username=haveagoodone';
+
+      var queryLocation = "lat=" + lat + "&lng=" + lon;
+      var locationUrl = 'http://api.geonames.org/findNearbyPlaceNameJSON?'+queryLocation+'&lang=de&username=haveagoodone';
+      
+      var search = locationSearch ? locationUrl : searchUrl;
+
+      return search;
     }, 
 
     parse: function(response) {
+      var places = new Geocoding.Collection();
+
+      for (var i = 0; i < response.geonames.length; i++) {
+        places.add(response.geonames[i]);
+      };
+
+      response.places = places;
+
       return response;
+    },
+
+    clearCity: function(city) {
+      var clearedCity = city.replace(/~/g,"");
+
+      return clearedCity;
+    },
+
+    getAdress: function() {
+      var adress = this.get('name') + ', ' +  this.get('adminName1');
+
+      return  adress;
     }
   })
+
+
+  Geocoding.Collection = Backbone.Collection.extend({ 
+    model: Geocoding.Model
+  });
+
 
   Geocoding.View = Backbone.View.extend({
 
     template: _.template(Template),
 
     initialize: function() {
-      this.reverseModel = new Geocoding.ReverseModel;
-      this.reverseModel.on('change:latitiude', this.render, this);
-
       this.model = new Geocoding.Model;
+      
+      this.listenTo(this.model, 'change', this.render);
+      this.listenTo(this.model, 'change:places', this.render);
+      this.listenTo(Backbone, 'updateFBCollection', this._onUpdateData);
     },
 
     events: {
-      'change input': '_onInputChanged' 
+      'submit': '_onInputChanged' 
+    },
+
+    _onUpdateData: function(data) {
+      this.model.set({
+        lat: data.latitude,
+        lon: data.longitude
+      });
+
+      this.model.fetch();
     },
 
     render: function() {
-      this.$el.empty().append(this.template(this.reverseModel));
+      this.$el.empty().append(this.template(this.model));
+
+      var places = this.model.get('places');
+
+      if (places && places.length == 0) {
+        this.$('#inputLocation').attr('placeholder', "Keine Ergebnisse");
+        return;
+      }
+
+      if (places && places.length == 1) {
+        var city = places.models[0].get('name');
+        var state = places.models[0].get('adminName1');
+        var adress = city + ', ' + state;
+        
+        this.$('#inputLocation').attr('placeholder', adress);
+      }
+
+      if (!Geocoding.locationSearch) {
+        if (places && places.length > 1) {
+          for (var i = 0; i < places.length; i++) {
+            
+            var itemView = new Geocoding.ItemView({
+              model: places.models[i]
+            });
+            $('.geocoading-places').append(itemView.render().el);
+          };
+          $('.geocoading-places').slideDown();
+        }
+      }
 
       return this;
     },
 
     _onInputChanged: function(e) {
-      var newLocation = $(e.target).val();
+      e.preventDefault();
 
-      this.model.set({ querySearch: newLocation });
+      var newLocation = this.$('#inputLocation').val();
+
+      Geocoding.locationSearch = false;
+      
+      this.model.set({ 
+        querySearch: newLocation
+      });
+
+      NProgress.configure({ showSpinner: false });
+      NProgress.start();
 
       this.model.fetch({
-        success: function(model, response) {
-          // ToDo: Fallback for an empty result
-
-          Backbone.trigger('setNewLocation', response.places[0].position);
+        success: function() {
+          NProgress.done();
         }
       });
     }
-  })
+  });
+
+  Geocoding.ItemView = Backbone.View.extend({
+
+    template: _.template(ItemTemplate),
+
+    events: {
+      'click': '_onClickItem'
+    },
+
+    render: function(){
+      this.$el.empty().append(this.template(this.model));
+      
+      return this;
+    },
+
+    _onClickItem: function(e) {
+      e.preventDefault();
+
+      var position = {
+        lat: this.model.get('lat'),
+        lon: this.model.get('lng')
+      };
+
+      Geocoding.locationSearch = true;
+
+      Backbone.trigger('setNewLocation', position);
+    }
+
+  });
 
   return Geocoding;
 }); 

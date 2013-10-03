@@ -7,7 +7,8 @@ require.config({
     'text'        : 'vendor/text/text',
     'openlayers'  : 'vendor/openlayers/openlayers',
     'facebook'    : '//connect.facebook.net/en_US/all',
-    'config'      : 'config'  
+    'config'      : 'config',
+    'nprogress'   : 'vendor/nprogress/nprogress'
   },
    shim: {
     'vendor/openlayers/openlayers': {
@@ -18,6 +19,10 @@ require.config({
     },
     'config': {
       exports: 'Config'
+    },
+    'nprogress' : {
+      deps: ['jquery'],
+      exports: 'nprogress'
     }
   }
 });

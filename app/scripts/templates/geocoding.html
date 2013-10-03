@@ -1,10 +1,8 @@
-<div class="adress">
-  <% 
-    var street = get('places')[0].street;
-    var zip = get('places')[0].zip;
-    var city = get('places')[0].city 
+<form method="get">
+  <div class="adress">
+    <input id="inputLocation" type="text">
+  </div>
+  <input type="submit" class="submitLocation" value="Locate" />
+</form>
 
-    var adress = street +', '+ zip +' '+ city
-  %>
-  <input  type="text" placeholder="<%= adress %>">
-</div>
+<div class="list-group geocoading-places"></div>
