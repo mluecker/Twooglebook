@@ -171,12 +171,22 @@ function(Backbone, Config, Template, Ol) {
           ]);
         }, this);
 
-        // ToDo: calculate the extent from the home location and the places
+        // Add the homeLocation to the map.extend
+        var features = this.featureLayer.clone();
+        var homeLat = this.model.get('homePosition').lat;
+        var homeLon = this.model.get('homePosition').lon;
+        var homeLocation = new OpenLayers.Geometry.Point(homeLon, homeLat).transform('EPSG:4326', 'EPSG:3857');
 
-        this.map.zoomToExtent(this.featureLayer.getDataExtent());
+        features.addFeatures([
+          new OpenLayers.Feature.Vector(homeLocation, {
+            id: 'homeLocation'
+          })
+        ]);
+
+        // Zoom to the extend of all features
+        this.map.zoomToExtent(features.getDataExtent());
 
       } else {
-
         var position = {
           lat: this.model.get('homePosition').lat,
           lon: this.model.get('homePosition').lon,
