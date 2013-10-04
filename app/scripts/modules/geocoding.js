@@ -17,9 +17,7 @@ function(Backbone, Config, Template, ItemTemplate) {
       querySearch: ""
     },
 
-    initialize: function() {
-      
-    },
+    initialize: function() { },
 
     url: function() {
       var lat = this.get('lat');
@@ -27,10 +25,10 @@ function(Backbone, Config, Template, ItemTemplate) {
       var locationSearch = Geocoding.locationSearch;
 
       var querySearch = this.get('querySearch');
-      var searchUrl = 'http://api.geonames.org/searchJSON?formatted=true&q='+querySearch+'&maxRows=10&lang=en&username=haveagoodone';
+      var searchUrl = 'http://api.geonames.org/searchJSON?formatted=true&q='+querySearch+'&maxRows=10&lang=en&username='+ Config.geonames.apiKey;
 
       var queryLocation = "lat=" + lat + "&lng=" + lon;
-      var locationUrl = 'http://api.geonames.org/findNearbyPlaceNameJSON?'+queryLocation+'&lang=de&username=haveagoodone';
+      var locationUrl = 'http://api.geonames.org/findNearbyPlaceNameJSON?'+queryLocation+'&lang=de&username='+ Config.geonames.apiKey;
       
       var search = locationSearch ? locationUrl : searchUrl;
 
@@ -109,6 +107,16 @@ function(Backbone, Config, Template, ItemTemplate) {
         var adress = city + ', ' + state;
         
         this.$('#inputLocation').attr('placeholder', adress);
+
+        // if (!Geocoding.locationSearch) {
+        //   var position = {
+        //     lat: this.model.get('places').models[0].get('lat'),
+        //     lon: this.model.get('places').models[0].get('lng')
+        //   }
+        //   Geocoding.locationSearch = true;
+
+        //   Backbone.trigger('setNewLocation', position);
+        // }
       }
 
       if (!Geocoding.locationSearch) {

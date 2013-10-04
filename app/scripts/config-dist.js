@@ -10,6 +10,9 @@ define(function() {
     },
     cloudmade: {
       apiKey: 'YOUR_CLOUDMADE_APIKEY'
+    },
+    geonames: {
+      apiKey: 'YOUR_GEONAMES_APIKEY'
     }
   };
   return Config;
