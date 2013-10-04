@@ -4,8 +4,28 @@
  * @author Mathias Lücker
  * @created 15.6.2013
  */
+html {
+  height: 100%;
+}
+
 body {
+  height: 100%;
   background-image: url(../img/background.png);
+}
+
+#main {
+  height: 100%;
+}
+
+.header-container {
+  left: 0;
+  right: 0;
+  position: absolute;
+}
+
+.content-container {
+  height: 100%;
+  padding-top: 45px;
 }
 
 .login {
@@ -42,6 +62,7 @@ body {
 }
 
 .content {
+  height: 100%;
   padding: 10px;
   box-sizing: border-box;
 }
@@ -53,6 +74,18 @@ body {
 
 /* Facebook
  *===================================*/
+ #facebook {
+  position: absolute;
+  top: 140px;
+  left: 15px;
+  right: 10px;
+  bottom: 0px;
+ }
+
+ .list-container {
+  height: 100%;
+ }
+
 #resultHead {
   float: left;
   height: 100%;
@@ -86,28 +119,34 @@ ul.post-list {
 }
 
 .post-item .badge {
-  margin-top:7px !important;
-  background-color: #fff;
+  top: 6px;
+  right: 20px;
   color: #428BCA;
+  position: absolute;
+  background-color: #FFF;
 }
 
 .post-list-container{
-  height: 410px;
-  overflow : auto;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
   text-align: left !important;
 }
 
 #results {
+  height: 100%;
   border: 1px solid #e3e3e3;
+  overflow: hidden;
   border-radius: 3px;
   background-color: #f5f5f5;
 }
 
 .place-name {
   float: left;
-  width: 245px;
+  width: 100%;
   overflow: hidden;
   white-space: nowrap;
+  padding-right: 40px;
   text-overflow: ellipsis;
 }
 
@@ -122,6 +161,7 @@ ul.post-list {
 .results-header {
   height: 40px;
   position: relative;
+  border-bottom: 1px solid #B1B1B1;
 }
 
 .results-header .list-item {
@@ -146,7 +186,10 @@ ul.post-list {
 }
 
 .results-content {
-  clear: left;
+  top: 39px;
+  width: 100%;
+  bottom: 0;
+  position: absolute;
 }
 
 .dropdown {
@@ -312,6 +355,13 @@ ul.post-list {
 
 /* Search
  *===================================*/
+#search {
+  left: 15px;
+  right: 10px;
+  height: 127px;
+  position: absolute;
+}
+
 #search input[type=checkbox] {
   clip: rect(0 0 0 0);
   width: 1px;
@@ -342,12 +392,18 @@ ul.post-list {
 
 /* Map
  *===================================*/
+.map-container {
+  height: 100%;
+  padding-left: 10px;
+}
+
 #map {
   width: 100%;
+  height: 100%;
 }
 
 #map-container {
-  height: 600px;
+  height: 100%;
   border: 1px solid #A8A8A8;
   border-radius: 3px;
 }
